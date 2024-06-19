@@ -7,6 +7,7 @@
 import math
 
 # import FreeCAD
+from OCC.Core.gp import gp_Vec, gp_Mat
 
 
 def rotation_matrix(u, v):
@@ -48,7 +49,7 @@ def rotation_matrix(u, v):
 
 def q_form_cyl(Axis, Pos, rad):
 
-    R = rotation_matrix(FreeCAD.Vector(1, 0, 0), Axis)
+    R = rotation_matrix(gp_Vec(1, 0, 0), Axis)
     R.transpose()
     Pos2 = R.multiply(Pos).negative()
 
@@ -71,7 +72,7 @@ def q_form_cyl(Axis, Pos, rad):
 
 def q_form_cone(Axis, Pos, tan):
 
-    R = rotation_matrix(FreeCAD.Vector(1, 0, 0), Axis)
+    R = rotation_matrix(gp_Vec(1, 0, 0), Axis)
     R.transpose()
     Pos2 = R.multiply(Pos).negative()
 

@@ -10,6 +10,8 @@ from importlib.metadata import version
 # import Part
 from tqdm import tqdm
 
+from OCC.Core.gp import gp_Vec
+
 from .code_version import *
 from .conversion import cell_definition as Conv
 from .cuboid.translate import translate
@@ -373,8 +375,8 @@ class CadToCsg:
             zmax = max(m.BoundBox.ZMax, zmax)
 
         self.geometry_bounding_box = FreeCAD.BoundBox(
-            FreeCAD.Vector(xmin - padding, ymin - padding, zmin - padding),
-            FreeCAD.Vector(xmax + padding, ymax + padding, zmax + padding),
+            gp_Vec(xmin - padding, ymin - padding, zmin - padding),
+            gp_Vec(xmax + padding, ymax + padding, zmax + padding),
         )
         return self.geometry_bounding_box
 

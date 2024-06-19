@@ -7,6 +7,8 @@ import xml.etree.ElementTree as ET
 import numpy as np
 from numpy import linalg as LA
 
+from OCC.Core.gp import gp_Trsf, gp_Vec
+
 from .Objects import CadCell, Cone, Cylinder, Plane, Sphere, Torus
 from .XMLParser import get_cards
 
@@ -269,13 +271,13 @@ def getSubUniverses(Ustart, Universes):
 #     Stype = 'torus'
 #     params = [[px,py,pz],[vx,vy,vz],ra,r]
 
-
+from OCC.Core.gp import gp_Vec
 # Return a diccionary with the corresponding surface Object
 def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
 
-    X_vec = FreeCAD.Vector(1.0, 0.0, 0.0)
-    Y_vec = FreeCAD.Vector(0.0, 1.0, 0.0)
-    Z_vec = FreeCAD.Vector(0.0, 0.0, 1.0)
+    X_vec = gp_Vec(1.0, 0.0, 0.0)
+    Y_vec = gp_Vec(0.0, 1.0, 0.0)
+    Z_vec = gp_Vec(0.0, 0.0, 1.0)
 
     surfaces = {}
     for Sid in mcnp_surfaces.keys():
@@ -288,7 +290,7 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
         if MCNPtype in ("plane", "x-plane", "y-plane", "z-plane"):
             Stype = "plane"
             if MCNPtype == "plane":
-                normal = FreeCAD.Vector(MCNPparams[0:3])
+                normal = gp_Vec(*MCNPparams[0:3])
                 params = (normal, MCNPparams[3] * scale)
             elif MCNPtype == "x-plane":
                 params = (X_vec, MCNPparams[0] * scale)
@@ -299,7 +301,7 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
 
         elif MCNPtype == "sphere":
             Stype = "sphere"
-            params = (FreeCAD.Vector(MCNPparams[0:3]) * scale, MCNPparams[3] * scale)
+            params = (gp_Vec(*MCNPparams[0:3]) * scale, MCNPparams[3] * scale)
 
         elif MCNPtype in ("x-cylinder", "y-cylinder", "z-cylinder"):
             R = MCNPparams[2]
@@ -309,13 +311,13 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
 
             if MCNPtype == "x-cylinder":
                 v = X_vec
-                p = FreeCAD.Vector(0.0, x1, x2)
+                p = gp_Vec(0.0, x1, x2)
             elif MCNPtype == "y-cylinder":
                 v = Y_vec
-                p = FreeCAD.Vector(x1, 0.0, x2)
+                p = gp_Vec(x1, 0.0, x2)
             elif MCNPtype == "z-cylinder":
                 v = Z_vec
-                p = FreeCAD.Vector(x1, x2, 0.0)
+                p = gp_Vec(x1, x2, 0.0)
 
             if scale != 1.0:
                 p = p.multiply(scale)
@@ -328,7 +330,7 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
             x1 = MCNPparams[0]
             x2 = MCNPparams[1]
             x3 = MCNPparams[2]
-            p = FreeCAD.Vector(x1, x2, x3)
+            p = gp_Vec(x1, x2, x3)
             t2 = MCNPparams[3]
             t = math.sqrt(t2)
             dblsht = True
@@ -345,7 +347,7 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
 
         elif MCNPtype in ["x-torus", "y-torus", "z-torus"]:
             Stype = "torus"
-            p = FreeCAD.Vector(MCNPparams[0:3])
+            p = gp_Vec(*MCNPparams[0:3])
             Ra, r1, r2 = MCNPparams[3:6]
 
             if MCNPtype == "x-torus":
@@ -368,8 +370,8 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
             Stype, quadric = gq2cyl(Qparams)
 
             if Stype == "cylinder":
-                p = FreeCAD.Vector(quadric[0:3])
-                v = FreeCAD.Vector(quadric[3:6])
+                p = gp_Vec(*quadric[0:3])
+                v = gp_Vec(*quadric[3:6])
                 R = quadric[6]
                 if scale != 1.0:
                     R *= scale
@@ -378,8 +380,8 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
                 params = (p, v, R)
 
             elif Stype == "cone":
-                p = FreeCAD.Vector(quadric[0:3])
-                v = FreeCAD.Vector(quadric[3:6])
+                p = gp_Vec(*quadric[0:3])
+                v = gp_Vec(*quadric[3:6])
                 t = quadric[6]
                 dblsht = quadric[7]
                 if scale != 1.0:

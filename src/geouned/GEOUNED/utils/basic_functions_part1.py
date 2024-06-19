@@ -4,7 +4,7 @@
 import math
 
 # import FreeCAD
-
+from OCC.Core.gp import gp_Vec
 
 def is_same_value(v1, v2, tolerance=1e-6):
     return abs(v1 - v2) < tolerance
@@ -91,7 +91,7 @@ def points_to_coeffs(points):
             xm = 1 / tpp[4 - i]
         coeff[4 - i] = tpp[4 - i] * xm
 
-    axis = FreeCAD.Vector(coeff[0:3])
+    axis = gp_Vec(*coeff[0:3])
     distance = coeff[3] / axis.Length
     axis.normalize()
 

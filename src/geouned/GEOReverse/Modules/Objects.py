@@ -4,6 +4,10 @@ import math
 import numpy as np
 # import Part
 
+from OCC.Core.gp import gp_Trsf, gp_Vec
+from OCC.Core.gp import gp_Cylinder, gp_Sphere
+from OCCUtils.Construct import make_box, make_face, make_polygon
+
 from .buildSolidCell import BuildSolid
 from .remh import Cline
 from .Utils.booleanFunction import BoolSequence, outer_terms
@@ -131,8 +135,8 @@ class CadCell:
         return self.__defTerms__, self.__operator__
 
     def makeBox(self, boundBox):
-        box_origin = FreeCAD.Vector(boundBox.XMin, boundBox.YMin, boundBox.ZMin)
-        return Part.makeBox(boundBox.XLength, boundBox.YLength, boundBox.ZLength, box_origin)
+        box_origin = gp_Vec(boundBox.XMin, boundBox.YMin, boundBox.ZMin)
+        return make_box(boundBox.XLength, boundBox.YLength, boundBox.ZLength, box_origin)
 
     def buildShape(self, boundBox, force=False, surfTR=None, simplify=False, fuse=False):
 
@@ -236,7 +240,7 @@ class Plane:
 
         if len(pointEdge) == 0:
             return
-        s = FreeCAD.Vector((0, 0, 0))
+        s = gp_Vec((0, 0, 0))
         for v in pointEdge:
             s = s + v
         s = s / len(pointEdge)
@@ -254,7 +258,7 @@ class Plane:
             orden.append((phi, i))
         orden.sort()
 
-        self.shape = Part.Face(Part.makePolygon([pointEdge[p[1]] for p in orden], True))
+        self.shape = make_face(make_polygon([pointEdge[p[1]] for p in orden], True))
 
 
 class Sphere:
@@ -638,9 +642,9 @@ class Box:
 
     def buildShape(self, boundBox):
         p, v1, v2, v3 = self.params
-        a1 = FreeCAD.Vector(v1)
-        a2 = FreeCAD.Vector(v2)
-        a3 = FreeCAD.Vector(v3)
+        a1 = gp_Vec(v1)
+        a2 = gp_Vec(v2)
+        a3 = gp_Vec(v3)
         a1.normalize()
         a2.normalize()
         a3.normalize()
@@ -910,6 +914,6 @@ def ortoVect(v):
     if vOrto is None:
         return None
 
-    vOrto = v.cross(FreeCAD.Vector(vOrto))
+    vOrto = v.cross(gp_Vec(vOrto))
     vOrto.normalize()
     return vOrto

@@ -6,6 +6,7 @@ import logging
 from pathlib import Path
 
 # import FreeCAD
+from OCC.Core.gp import gp_Vec
 
 from ..code_version import *
 from ..utils.functions import SurfacesDict
@@ -235,17 +236,17 @@ import openmc
 
         for p in Surfaces["PX"]:
             if p.Surf.Axis[0] < 0:
-                p.Surf.Axis = FreeCAD.Vector(1, 0, 0)
+                p.Surf.Axis = gp_Vec(1, 0, 0)
                 self.change_surf_sign(p)
 
         for p in Surfaces["PY"]:
             if p.Surf.Axis[1] < 0:
-                p.Surf.Axis = FreeCAD.Vector(0, 1, 0)
+                p.Surf.Axis = gp_Vec(0, 1, 0)
                 self.change_surf_sign(p)
 
         for p in Surfaces["PZ"]:
             if p.Surf.Axis[2] < 0:
-                p.Surf.Axis = FreeCAD.Vector(0, 0, 1)
+                p.Surf.Axis = gp_Vec(0, 0, 1)
                 self.change_surf_sign(p)
         return
 

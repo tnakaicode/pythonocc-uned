@@ -7,6 +7,7 @@ from pathlib import Path
 from importlib.metadata import version
 
 # import FreeCAD
+from OCC.Core.gp import gp_Vec
 
 from ..utils.basic_functions_part1 import is_opposite, points_to_coeffs
 from ..utils.functions import SurfacesDict
@@ -324,17 +325,17 @@ class SerpentInput:
 
         for p in Surfaces["PX"]:
             if p.Surf.Axis[0] < 0:
-                p.Surf.Axis = FreeCAD.Vector(1, 0, 0)
+                p.Surf.Axis = gp_Vec(1, 0, 0)
                 self.change_surf_sign(p)
 
         for p in Surfaces["PY"]:
             if p.Surf.Axis[1] < 0:
-                p.Surf.Axis = FreeCAD.Vector(0, 1, 0)
+                p.Surf.Axis = gp_Vec(0, 1, 0)
                 self.change_surf_sign(p)
 
         for p in Surfaces["PZ"]:
             if p.Surf.Axis[2] < 0:
-                p.Surf.Axis = FreeCAD.Vector(0, 0, 1)
+                p.Surf.Axis = gp_Vec(0, 0, 1)
                 self.change_surf_sign(p)
 
         if self.options.prnt3PPlane:

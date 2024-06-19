@@ -3,6 +3,8 @@ import logging
 # import FreeCAD
 # import Part
 
+from OCC.Core.gp import gp_Vec
+
 from ..decompose import decom_one as Decom
 from ..utils import basic_functions_part2 as BF
 from ..utils import geometry_gu as GU
@@ -65,11 +67,11 @@ def is_inverted(solid):
 # TODO rename this function as there are two with the same name
 def get_id(face_in, Surfaces, options, tolerances, numeric_format):
 
-    if is_parallel(face_in.Axis, FreeCAD.Vector(1, 0, 0), tolerances.pln_angle):
+    if is_parallel(face_in.Axis, gp_Vec(1, 0, 0), tolerances.pln_angle):
         plane = "PX"
-    elif is_parallel(face_in.Axis, FreeCAD.Vector(0, 1, 0), tolerances.pln_angle):
+    elif is_parallel(face_in.Axis, gp_Vec(0, 1, 0), tolerances.pln_angle):
         plane = "PY"
-    elif is_parallel(face_in.Axis, FreeCAD.Vector(0, 0, 1), tolerances.pln_angle):
+    elif is_parallel(face_in.Axis, gp_Vec(0, 0, 1), tolerances.pln_angle):
         plane = "PZ"
     else:
         plane = "P"

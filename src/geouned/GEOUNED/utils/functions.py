@@ -8,6 +8,7 @@ import math
 # import FreeCAD
 import numpy as np
 # import Part
+from OCC.Core.gp import gp_Vec
 
 logger = logging.getLogger("general_logger")
 
@@ -33,8 +34,8 @@ def get_box(comp, enlargeBox):
         xLength,
         yLength,
         zLength,
-        FreeCAD.Vector(xMin, yMin, zMin),
-        FreeCAD.Vector(0, 0, 1),
+        gp_Vec(xMin, yMin, zMin),
+        gp_Vec(0, 0, 1),
     )
 
 
@@ -238,7 +239,7 @@ class GeounedSurface:
                 self.shape = None  # Plane does not cross box
                 return
 
-            s = FreeCAD.Vector((0, 0, 0))
+            s = gp_Vec((0, 0, 0))
             for v in pointEdge:
                 s = s + v
             s = s / len(pointEdge)
@@ -386,9 +387,9 @@ class SurfacesDict(dict):
             self.add_torus(s, tolerances)
 
     def add_plane(self, plane, options, tolerances, numeric_format, fuzzy):
-        ex = FreeCAD.Vector(1, 0, 0)
-        ey = FreeCAD.Vector(0, 1, 0)
-        ez = FreeCAD.Vector(0, 0, 1)
+        ex = gp_Vec(1, 0, 0)
+        ey = gp_Vec(0, 1, 0)
+        ez = gp_Vec(0, 0, 1)
 
         if is_parallel(plane.Surf.Axis, ex, tolerances.pln_angle):
             add_plane = True

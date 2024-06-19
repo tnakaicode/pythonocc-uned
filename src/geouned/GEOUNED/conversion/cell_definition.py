@@ -7,6 +7,8 @@ import math
 # import FreeCAD
 # import Part
 
+from OCC.Core.gp import gp_Vec
+
 from ..utils import basic_functions_part2 as BF
 from ..utils import functions as UF
 from ..utils import geometry_gu as GU
@@ -29,11 +31,11 @@ def get_id(facein, surfaces, options, tolerances, numeric_format):
 
     surfin = str(facein)
     if surfin == "<Plane object>":
-        if is_parallel(facein.Axis, FreeCAD.Vector(1, 0, 0), tolerances.pln_angle):
+        if is_parallel(facein.Axis, gp_Vec(1, 0, 0), tolerances.pln_angle):
             p = "PX"
-        elif is_parallel(facein.Axis, FreeCAD.Vector(0, 1, 0), tolerances.pln_angle):
+        elif is_parallel(facein.Axis, gp_Vec(0, 1, 0), tolerances.pln_angle):
             p = "PY"
-        elif is_parallel(facein.Axis, FreeCAD.Vector(0, 0, 1), tolerances.pln_angle):
+        elif is_parallel(facein.Axis, gp_Vec(0, 0, 1), tolerances.pln_angle):
             p = "PZ"
         else:
             p = "P"
@@ -261,7 +263,7 @@ def gen_plane_sphere(face, solid):
                     break
 
     # print same_faces
-    normal = FreeCAD.Vector(0, 0, 0)
+    normal = gp_Vec(0, 0, 0)
     for f in same_faces:
         normal += f.Area * (f.CenterOfMass - face.Surface.Center)
 
@@ -364,12 +366,12 @@ def gen_plane_cone(face, solid, tolerances):
 
 def gen_torus_annex_u_planes(face, u_params, tolerances):
 
-    if is_parallel(face.Surface.Axis, FreeCAD.Vector(1, 0, 0), tolerances.tor_angle):
-        axis = FreeCAD.Vector(1, 0, 0)
-    elif is_parallel(face.Surface.Axis, FreeCAD.Vector(0, 1, 0), tolerances.tor_angle):
-        axis = FreeCAD.Vector(0, 1, 0)
-    elif is_parallel(face.Surface.Axis, FreeCAD.Vector(0, 0, 1), tolerances.tor_angle):
-        axis = FreeCAD.Vector(0, 0, 1)
+    if is_parallel(face.Surface.Axis, gp_Vec(1, 0, 0), tolerances.tor_angle):
+        axis = gp_Vec(1, 0, 0)
+    elif is_parallel(face.Surface.Axis, gp_Vec(0, 1, 0), tolerances.tor_angle):
+        axis = gp_Vec(0, 1, 0)
+    elif is_parallel(face.Surface.Axis, gp_Vec(0, 0, 1), tolerances.tor_angle):
+        axis = gp_Vec(0, 0, 1)
 
     center = face.Surface.Center
     p1 = face.valueAt(u_params[0], 0.0)
@@ -414,12 +416,12 @@ def gen_torus_annex_u_planes(face, u_params, tolerances):
 
 
 def gen_torus_annex_v_surface(face, v_params, tolerances, force_cylinder=False):
-    if is_parallel(face.Surface.Axis, FreeCAD.Vector(1, 0, 0), tolerances.tor_angle):
-        axis = FreeCAD.Vector(1, 0, 0)
-    elif is_parallel(face.Surface.Axis, FreeCAD.Vector(0, 1, 0), tolerances.tor_angle):
-        axis = FreeCAD.Vector(0, 1, 0)
-    elif is_parallel(face.Surface.Axis, FreeCAD.Vector(0, 0, 1), tolerances.tor_angle):
-        axis = FreeCAD.Vector(0, 0, 1)
+    if is_parallel(face.Surface.Axis, gp_Vec(1, 0, 0), tolerances.tor_angle):
+        axis = gp_Vec(1, 0, 0)
+    elif is_parallel(face.Surface.Axis, gp_Vec(0, 1, 0), tolerances.tor_angle):
+        axis = gp_Vec(0, 1, 0)
+    elif is_parallel(face.Surface.Axis, gp_Vec(0, 0, 1), tolerances.tor_angle):
+        axis = gp_Vec(0, 0, 1)
 
     p1 = face.valueAt(0.0, v_params[0]) - face.Surface.Center
     z1 = p1.dot(axis)
@@ -580,9 +582,9 @@ def cellDef(meta_obj, surfaces, universe_box, options, tolerances, numeric_forma
             elif surface_type == "<Toroid object>":
 
                 if (
-                    is_parallel(face.Surface.Axis, FreeCAD.Vector(1, 0, 0), tolerances.angle)
-                    or is_parallel(face.Surface.Axis, FreeCAD.Vector(0, 1, 0), tolerances.angle)
-                    or is_parallel(face.Surface.Axis, FreeCAD.Vector(0, 0, 1), tolerances.angle)
+                    is_parallel(face.Surface.Axis, gp_Vec(1, 0, 0), tolerances.angle)
+                    or is_parallel(face.Surface.Axis, gp_Vec(0, 1, 0), tolerances.angle)
+                    or is_parallel(face.Surface.Axis, gp_Vec(0, 0, 1), tolerances.angle)
                 ):
 
                     idT = get_id(face.Surface, surfaces, options, tolerances, numeric_format)
@@ -887,9 +889,9 @@ def no_overlapping_cell(metaList, surfaces, options):
 
 
 def add_cone_plane(definition, cones_list, surfaces, universe_box, options, tolerances, numeric_format):
-    x_axis = FreeCAD.Vector(1, 0, 0)
-    y_axis = FreeCAD.Vector(0, 1, 0)
-    z_axis = FreeCAD.Vector(0, 0, 1)
+    x_axis = gp_Vec(1, 0, 0)
+    y_axis = gp_Vec(0, 1, 0)
+    z_axis = gp_Vec(0, 0, 1)
 
     for cid in cones_list:
         cone = surfaces.get_surface(abs(cid))

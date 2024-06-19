@@ -4,6 +4,7 @@ import logging
 
 # import FreeCAD
 # import Part
+from OCC.Core.gp import gp_Vec
 
 from ..conversion import cell_definition as Conv
 from ..decompose import decom_one as Decom
@@ -95,10 +96,10 @@ class VoidBox:
             Z2Min = pos
             Z2Max = self.BoundBox.ZMax
 
-        VMin1 = FreeCAD.Vector(X1Min, Y1Min, Z1Min)
-        VMax1 = FreeCAD.Vector(X1Max, Y1Max, Z1Max)
-        VMin2 = FreeCAD.Vector(X2Min, Y2Min, Z2Min)
-        VMax2 = FreeCAD.Vector(X2Max, Y2Max, Z2Max)
+        VMin1 = gp_Vec(X1Min, Y1Min, Z1Min)
+        VMax1 = gp_Vec(X1Max, Y1Max, Z1Max)
+        VMin2 = gp_Vec(X2Min, Y2Min, Z2Min)
+        VMax2 = gp_Vec(X2Max, Y2Max, Z2Max)
         box1 = FreeCAD.BoundBox(VMin1, VMax1)
         box2 = FreeCAD.BoundBox(VMin2, VMax2)
 
@@ -129,8 +130,8 @@ class VoidBox:
             Box.XLength,
             Box.YLength,
             Box.ZLength,
-            FreeCAD.Vector(Box.XMin, Box.YMin, Box.ZMin),
-            FreeCAD.Vector(0, 0, 1),
+            gp_Vec(Box.XMin, Box.YMin, Box.ZMin),
+            gp_Vec(0, 0, 1),
         )
         dist = Cube.distToShape(self.PieceEnclosure)[0]
         try:
@@ -156,8 +157,8 @@ class VoidBox:
             self.BoundBox.XLength,
             self.BoundBox.YLength,
             self.BoundBox.ZLength,
-            FreeCAD.Vector(self.BoundBox.XMin, self.BoundBox.YMin, self.BoundBox.ZMin),
-            FreeCAD.Vector(0, 0, 1),
+            gp_Vec(self.BoundBox.XMin, self.BoundBox.YMin, self.BoundBox.ZMin),
+            gp_Vec(0, 0, 1),
         )
 
         for m in self.Objects:
@@ -225,8 +226,8 @@ class VoidBox:
             bBox.XLength + 2 * d,
             bBox.YLength + 2 * d,
             bBox.ZLength + 2 * d,
-            FreeCAD.Vector(bBox.XMin - d, bBox.YMin - d, bBox.ZMin - d),
-            FreeCAD.Vector(0, 0, 1),
+            gp_Vec(bBox.XMin - d, bBox.YMin - d, bBox.ZMin - d),
+            gp_Vec(0, 0, 1),
         )
 
         voidSolidDef = BoolSequence(operator="OR")
@@ -379,8 +380,8 @@ class VoidBox:
             (
                 "Plane",
                 (
-                    FreeCAD.Vector(self.BoundBox.XMin, Ymid, Zmid),
-                    FreeCAD.Vector(1, 0, 0),
+                    gp_Vec(self.BoundBox.XMin, Ymid, Zmid),
+                    gp_Vec(1, 0, 0),
                     LY,
                     LZ,
                 ),
@@ -391,8 +392,8 @@ class VoidBox:
             (
                 "Plane",
                 (
-                    FreeCAD.Vector(self.BoundBox.XMax, Ymid, Zmid),
-                    FreeCAD.Vector(-1, 0, 0),
+                    gp_Vec(self.BoundBox.XMax, Ymid, Zmid),
+                    gp_Vec(-1, 0, 0),
                     LY,
                     LZ,
                 ),
@@ -403,8 +404,8 @@ class VoidBox:
             (
                 "Plane",
                 (
-                    FreeCAD.Vector(Xmid, self.BoundBox.YMin, Zmid),
-                    FreeCAD.Vector(0, 1, 0),
+                    gp_Vec(Xmid, self.BoundBox.YMin, Zmid),
+                    gp_Vec(0, 1, 0),
                     LZ,
                     LX,
                 ),
@@ -415,8 +416,8 @@ class VoidBox:
             (
                 "Plane",
                 (
-                    FreeCAD.Vector(Xmid, self.BoundBox.YMax, Zmid),
-                    FreeCAD.Vector(0, -1, 0),
+                    gp_Vec(Xmid, self.BoundBox.YMax, Zmid),
+                    gp_Vec(0, -1, 0),
                     LZ,
                     LX,
                 ),
@@ -427,8 +428,8 @@ class VoidBox:
             (
                 "Plane",
                 (
-                    FreeCAD.Vector(Xmid, Ymid, self.BoundBox.ZMin),
-                    FreeCAD.Vector(0, 0, 1),
+                    gp_Vec(Xmid, Ymid, self.BoundBox.ZMin),
+                    gp_Vec(0, 0, 1),
                     LX,
                     LY,
                 ),
@@ -439,8 +440,8 @@ class VoidBox:
             (
                 "Plane",
                 (
-                    FreeCAD.Vector(Xmid, Ymid, self.BoundBox.ZMax),
-                    FreeCAD.Vector(0, 0, -1),
+                    gp_Vec(Xmid, Ymid, self.BoundBox.ZMax),
+                    gp_Vec(0, 0, -1),
                     LX,
                     LY,
                 ),

@@ -4,6 +4,8 @@ import logging
 # import Part
 from tqdm import tqdm
 
+from OCC.Core.gp import gp_Vec
+
 from ..loadfile import load_functions as LF
 from ..utils.basic_functions_part1 import is_opposite
 from ..utils.boolean_function import BoolSequence
@@ -41,8 +43,8 @@ def void_generation(
         UniverseBox.XLength,
         UniverseBox.YLength,
         UniverseBox.ZLength,
-        FreeCAD.Vector(UniverseBox.XMin, UniverseBox.YMin, UniverseBox.ZMin),
-        FreeCAD.Vector(0, 0, 1),
+        gp_Vec(UniverseBox.XMin, UniverseBox.YMin, UniverseBox.ZMin),
+        gp_Vec(0, 0, 1),
     )
 
     EnclosureBox = GeounedSolid(None, Box)

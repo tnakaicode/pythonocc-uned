@@ -4,6 +4,7 @@ import math
 # import FreeCAD
 # import Part
 
+from OCC.Core.gp import gp_Vec
 
 class SplitBase:
     def __init__(self, base, knownSurf={}):
@@ -168,7 +169,7 @@ def point_inside(solid):
 
     while True:
         for p in centers:
-            pp = FreeCAD.Vector(p[0], p[1], p[2])
+            pp = gp_Vec(p[0], p[1], p[2])
             if solid.isInside(pp, 0.0, False):
                 return pp
 
