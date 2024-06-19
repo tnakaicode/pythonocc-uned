@@ -12,7 +12,7 @@ from OCC.Core.gp import gp_Pnt, gp_Vec, gp_Dir
 from OCC.Core.gp import gp_Ax1, gp_Ax2, gp_Ax3
 from OCC.Core.Bnd import Bnd_Box
 from OCC.Core.BRepBndLib import brepbndlib
-from OCCUtils.Construct import make_box
+from OCCUtils.Construct import make_box, make_polygon, make_face, compound
 
 logger = logging.getLogger("general_logger")
 
@@ -28,7 +28,7 @@ from .basic_functions_part1 import (
 from . import basic_functions_part2 as BF
 
 
-def get_boundingbox(shape, tol=1e-6, optimal_BB=True):
+def get_boundingbox(shape=None, tol=1e-6, optimal_BB=True):
     """ return the bounding box of the TopoDS_Shape `shape`
 
     Parameters
@@ -47,14 +47,18 @@ def get_boundingbox(shape, tol=1e-6, optimal_BB=True):
     bbox = Bnd_Box()
     bbox.SetGap(tol)
 
-    # note: useTriangulation is True by default, we set it explicitely, but t's not necessary
-    if optimal_BB:
-        use_triangulation = True
-        use_shapetolerance = True
-        brepbndlib.AddOptimal(
-            shape, bbox, use_triangulation, use_shapetolerance)
+    if shape == None:
+        return bbox
     else:
-        brepbndlib.Add(shape, bbox)
+
+        # note: useTriangulation is True by default, we set it explicitely, but t's not necessary
+        if optimal_BB:
+            use_triangulation = True
+            use_shapetolerance = True
+            brepbndlib.AddOptimal(
+                shape, bbox, use_triangulation, use_shapetolerance)
+        else:
+            brepbndlib.Add(shape, bbox)
 
     return bbox
 
@@ -84,10 +88,10 @@ class GeounedSolid:
         elif type(comsolid) is list:
             self.Solids = comsolid
             vol = 0
-            self.BoundBox = FreeCAD.BoundBox()
+            self.BoundBox = get_boundingbox(None)
             for s in comsolid:
                 vol += s.Volume
-                self.BoundBox.add(s.BoundBox)
+                self.BoundBox.add(s)
             self.Volume = vol
         else:
             if refine:
@@ -130,13 +134,13 @@ class GeounedSolid:
     def update_solids(self, solidList):
         self.Solids = solidList
         vol = 0
-        self.BoundBox = FreeCAD.BoundBox()
+        self.BoundBox = get_boundingbox(None)
         for s in solidList:
             vol += s.Volume
-            self.BoundBox.add(s.BoundBox)
+            self.BoundBox.add(s)
 
     def set_cad_solid(self):
-        self.CADSolid = Part.makeCompound(self.Solids)
+        self.CADSolid = compound(self.Solids)
         self.Volume = self.CADSolid.Volume
         self.BoundBox = self.CADSolid.BoundBox
 
@@ -257,8 +261,8 @@ class GeounedSurface:
 
             normal = self.Surf.Axis
             p0 = normal.dot(self.Surf.Position)
-            Box = FreeCAD.BoundBox(self.__boundBox__)
-            Box.enlarge(10)
+            Box = get_boundingbox(self.__boundBox__)
+            Box.Enlarge(10)
 
             pointEdge = []
             for i in range(12):
@@ -294,13 +298,13 @@ class GeounedSurface:
                 orden.append((phi, i))
             orden.sort()
 
-            self.shape = Part.Face(Part.makePolygon(
+            self.shape = make_face(make_polygon(
                 [pointEdge[p[1]] for p in orden], True))
 
             return
 
         elif self.Type == "Cylinder":
-            dir = self.Surf.Axis
+            dir = self.Surf.Axis.Direction()
             pnt = self.Surf.Center
             rad = self.Surf.Radius
 

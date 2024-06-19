@@ -4,7 +4,9 @@
 import math
 
 # import FreeCAD
-from OCC.Core.gp import gp_Vec
+from OCC.Core.gp import gp_Pnt, gp_Vec, gp_Dir
+from OCC.Core.gp import gp_Ax3
+
 
 def is_same_value(v1, v2, tolerance=1e-6):
     return abs(v1 - v2) < tolerance
@@ -37,8 +39,10 @@ def is_in_points(point, points, tolerance=1e-5):
 def is_in_edge(edge1, edge2, tolerance=1e-8):
     ver1 = edge1.Vertexes
     ver2 = edge2.Vertexes
-    con1 = ver1[0].Point.isEqual(ver2[0].Point, tolerance) or ver1[0].Point.isEqual(ver2[1].Point, tolerance)
-    con2 = ver1[1].Point.isEqual(ver2[0].Point, tolerance) or ver1[1].Point.isEqual(ver2[1].Point, tolerance)
+    con1 = ver1[0].Point.isEqual(
+        ver2[0].Point, tolerance) or ver1[0].Point.isEqual(ver2[1].Point, tolerance)
+    con2 = ver1[1].Point.isEqual(
+        ver2[0].Point, tolerance) or ver1[1].Point.isEqual(ver2[1].Point, tolerance)
     return con1 and con2
 
 
@@ -80,9 +84,11 @@ def points_to_coeffs(points):
         k -= 1
         j -= 1
         tpp[i - 1] = (
-            scf[j] * (scf[k + 3] - scf[k + 6]) + scf[j + 3] * (scf[k + 6] - scf[k]) + scf[j + 6] * (scf[k] - scf[k + 3])
+            scf[j] * (scf[k + 3] - scf[k + 6]) + scf[j + 3] *
+            (scf[k + 6] - scf[k]) + scf[j + 6] * (scf[k] - scf[k + 3])
         )
-        tpp[3] += scf[i - 1] * (scf[j + 3] * scf[k + 6] - scf[j + 6] * scf[k + 3])
+        tpp[3] += scf[i - 1] * \
+            (scf[j + 3] * scf[k + 6] - scf[j + 6] * scf[k + 3])
 
     xm = 0
     coeff = [0] * 4
@@ -98,8 +104,17 @@ def points_to_coeffs(points):
     return axis, distance
 
 
-class Plane3PtsParams:
+class Params(object):
+
+    def __init__(self):
+        self.Position = gp_Pnt(0, 0, 0)
+        self.Axis = gp_Ax3()
+
+
+class Plane3PtsParams(Params):
+
     def __init__(self, params, real=True):
+        super().__init__()
         self.Position = params[0]
         self.Axis = params[1]
         self.dimL1 = params[2]
@@ -120,8 +135,10 @@ class Plane3PtsParams:
         return outstr
 
 
-class PlaneParams:
+class PlaneParams(Params):
+
     def __init__(self, params, real=True):
+        super().__init__()
         self.Position = params[0]
         self.Axis = params[1]
         self.dimL1 = params[2]
@@ -137,8 +154,10 @@ class PlaneParams:
         return outstr
 
 
-class CylinderParams:
+class CylinderParams(Params):
+
     def __init__(self, params, real=True):
+        super().__init__()
         self.Center = params[0]
         self.Axis = params[1]
         self.Radius = params[2]
@@ -153,8 +172,10 @@ class CylinderParams:
         return outstr
 
 
-class ConeParams:
+class ConeParams(Params):
+
     def __init__(self, params, real=True):
+        super().__init__()
         self.Apex = params[0]
         self.Axis = params[1]
         self.SemiAngle = params[2]
@@ -170,8 +191,10 @@ class ConeParams:
         return outstr
 
 
-class SphereParams:
+class SphereParams(Params):
+
     def __init__(self, params):
+        super().__init__()
         self.Center = params[0]
         self.Radius = params[1]
 
@@ -182,8 +205,10 @@ class SphereParams:
         return outstr
 
 
-class TorusParams:
+class TorusParams(Params):
+
     def __init__(self, params):
+        super().__init__()
         self.Center = params[0]
         self.Axis = params[1]
         self.MajorRadius = params[2]
