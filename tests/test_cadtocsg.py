@@ -130,7 +130,7 @@ def test_conversion(input_step_file):
     #    assert output_filename_stem.with_suffix(suffix).exists()
 
 
-def test_conversion_all():
+def test_conversion_multi():
     """Test that step files can be converted to openmc and mcnp files"""
 
     my_options = geouned.Options(
@@ -187,7 +187,7 @@ def test_conversion_all():
         voidGen=True,
         debug=False,
         compSolids=True,
-        simplify="no",
+        simplify="fill",
         exportSolids="",
         minVoidSize=200.0,  # units mm
         maxSurf=50,
@@ -206,17 +206,20 @@ def test_conversion_all():
         numeric_format=my_numeric_format,
     )
 
+    # geo.load_step_file(
+    #    filename=[f"{f.resolve()}" for f in step_files][0:10], skip_solids=[])
+
     geo.load_step_file(
-        filename=[f"{f.resolve()}" for f in step_files][0:10], skip_solids=[])
+        filename=["./testing/inputSTEP/large/Triangle.stp"] + [f"{f.resolve()}" for f in step_files][0:10], skip_solids=[])
 
-    #geo.load_step_file(
+    # geo.load_step_file(
     #    filename=[f"{f.resolve()}" for f in step_files][11:15], skip_solids=[])
-
+    
     geo.start()
 
     geo.export_csg(
         title="Converted with GEOUNED",
-        geometryName=f"./tests_outputs/ALL",
+        geometryName=f"./tests_outputs/test_conversion_multi",
         outFormat=(
             # "openmc_xml",
             # "openmc_py",
@@ -226,7 +229,7 @@ def test_conversion_all():
         ),
         volSDEF=True,  # changed from the default
         volCARD=True,  # changed from the default
-        UCARD=None,
+        UCARD=None,  # [0] --> Error
         dummyMat=True,  # changed from the default
         cellCommentFile=True,
         cellSummaryFile=True,  # changed from the default
