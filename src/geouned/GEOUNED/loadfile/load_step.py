@@ -36,40 +36,14 @@ def load_cad(filename, settings, options):
     from OCC.Extend.DataExchange import read_step_file_with_names_colors
     from OCC.Core.TDocStd import TDocStd_Document
     from OCC.Core.XCAFDoc import XCAFDoc_DocumentTool
+    from OCC.Core.STEPControl import STEPControl_Reader
     from OCC.Core.STEPCAFControl import STEPCAFControl_Reader
-    from OCC.Core.IFSelect import IFSelect_RetDone
+    from OCC.Core.IFSelect import IFSelect_RetDone, IFSelect_ItemsByEntity
 
     if not os.path.isfile(filename):
         raise FileNotFoundError(f"{filename} not found.")
     # the list:
     output_shapes = {}
-
-    # create an handle to a document
-    doc = TDocStd_Document("CAD_simplificado")
-
-    # Get root assembly
-    shape_tool = XCAFDoc_DocumentTool.ShapeTool(doc.Main())
-    color_tool = XCAFDoc_DocumentTool.ColorTool(doc.Main())
-    # layer_tool = XCAFDoc_DocumentTool_LayerTool(doc.Main())
-    # mat_tool = XCAFDoc_DocumentTool_MaterialTool(doc.Main())
-
-    step_reader = STEPCAFControl_Reader()
-    step_reader.SetColorMode(True)
-    step_reader.SetLayerMode(True)
-    step_reader.SetNameMode(True)
-    step_reader.SetMatMode(True)
-    step_reader.SetGDTMode(True)
-
-    status = step_reader.ReadFile(filename)
-    if status == IFSelect_RetDone:
-        step_reader.Transfer(doc)
-
-    # Set document solid tree options when opening CAD differing from version 0.18
-    # if int(FreeCAD.Version()[1]) > 18:
-    #     LF.set_doc_options()
-
-    # cad_simplificado_doc = FreeCAD.newDocument("CAD_simplificado")
-    # Import.insert(filename, "CAD_simplificado")
 
     if settings.matFile != "":
         if os.path.exists(settings.matFile):
@@ -80,12 +54,63 @@ def load_cad(filename, settings, options):
     else:
         m_dict = {}
 
-    s = Part.Shape()
-    s.read(filename)
-    Solids = s.Solids
+    # create an handle to a document
+    doc = TDocStd_Document("CAD_simplificado")
+
+    # Get root assembly
+    shape_tool = XCAFDoc_DocumentTool.ShapeTool(doc.Main())
+    color_tool = XCAFDoc_DocumentTool.ColorTool(doc.Main())
+    # layer_tool = XCAFDoc_DocumentTool_LayerTool(doc.Main())
+    # mat_tool = XCAFDoc_DocumentTool_MaterialTool(doc.Main())
+
+    #step_reader = STEPCAFControl_Reader()
+    #step_reader.SetColorMode(True)
+    #step_reader.SetLayerMode(True)
+    #step_reader.SetNameMode(True)
+    #step_reader.SetMatMode(True)
+    #step_reader.SetGDTMode(True)
+
+    #status = step_reader.ReadFile(filename)
+    #if status == IFSelect_RetDone:
+    #    step_reader.Transfer(doc)
+    
+    
+    verbosity=True
+    step_reader = STEPControl_Reader()
+    status = step_reader.ReadFile(filename)
+
+    if status != IFSelect_RetDone:
+        raise AssertionError("Error: can't read file.")
+    if verbosity:
+        failsonly = False
+        step_reader.PrintCheckLoad(failsonly, IFSelect_ItemsByEntity)
+        step_reader.PrintCheckTransfer(failsonly, IFSelect_ItemsByEntity)
+    transfer_result = step_reader.TransferRoots()
+    if not transfer_result:
+        raise AssertionError("Transfer failed.")
+    _nbs = step_reader.NbShapes()
+    if _nbs == 0:
+        raise AssertionError("No shape to transfer.")
+    if _nbs == 1:  # most cases
+        return step_reader.Shape(1)
+
     meta_list = []
-    for i, s in enumerate(Solids):
-        meta_list.append(UF.GeounedSolid(i + 1, s))
+    for k in range(1, _nbs + 1):
+        meta_list.append(UF.GeounedSolid(i + 1, step_reader.Shape(k)))
+
+    # Set document solid tree options when opening CAD differing from version 0.18
+    # if int(FreeCAD.Version()[1]) > 18:
+    #     LF.set_doc_options()
+
+    # cad_simplificado_doc = FreeCAD.newDocument("CAD_simplificado")
+    # Import.insert(filename, "CAD_simplificado")
+
+    
+
+
+    #s = Part.Shape()
+    #s.read(filename)
+    #Solids = s.Solids
 
     i_solid = 0
     missing_mat = set()

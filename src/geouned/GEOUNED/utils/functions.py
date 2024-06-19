@@ -142,7 +142,7 @@ class GeounedSolid:
     def set_cad_solid(self):
         self.CADSolid = compound(self.Solids)
         self.Volume = self.CADSolid.Volume
-        self.BoundBox = self.CADSolid.BoundBox
+        self.BoundBox = get_boundingbox(self.CADSolid)
 
     def set_definition(self, definition, simplify=False):
 
