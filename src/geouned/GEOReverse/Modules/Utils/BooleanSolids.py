@@ -4,7 +4,7 @@
 #
 import math
 
-import BOPTools.SplitAPI
+# import BOPTools.SplitAPI
 # import FreeCAD
 
 from .booleanFunction import BoolSequence

@@ -17,7 +17,7 @@ import geouned
 import openmc
 # import Part
 import pytest
-from FreeCAD import Import
+# from FreeCAD import Import
 
 with open("cross_sections.xml", "w") as file:
     file.write(

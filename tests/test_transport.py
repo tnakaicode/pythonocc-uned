@@ -15,7 +15,7 @@ from pathlib import Path
 import openmc
 # import Part
 import pytest
-from FreeCAD import Import
+# from FreeCAD import Import
 
 openmc.config["cross_sections"] = Path("tests/cross_sections.xml").resolve()
 
