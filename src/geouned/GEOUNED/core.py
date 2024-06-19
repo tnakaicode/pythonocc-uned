@@ -11,6 +11,8 @@ from importlib.metadata import version
 from tqdm import tqdm
 
 from OCC.Core.gp import gp_Vec
+from OCCUtils.Construct import compound
+from .utils_occ.Construct import compsolid
 
 from .code_version import *
 from .conversion import cell_definition as Conv
@@ -26,7 +28,7 @@ from .write.write_files import write_geometry
 
 logger = logging.getLogger("general_logger")
 logger.info(f"GEOUNED version {version('geouned')}")
-logger.info(f"FreeCAD version {'.'.join(FreeCAD.Version()[:3])}")
+# logger.info(f"FreeCAD version {'.'.join(FreeCAD.Version()[:3])}")
 
 
 class CadToCsg:
@@ -611,7 +613,7 @@ class CadToCsg:
                     m.Solids[0].exportStep(str(debug_output_folder / f"origSolid_{i}.stp"))
 
             comsolid, err = Decom.SplitSolid(
-                Part.makeCompound(m.Solids),
+                compound(m.Solids),
                 self.geometry_bounding_box,
                 self.options,
                 self.tolerances,
@@ -622,10 +624,10 @@ class CadToCsg:
                 sus_output_folder = Path("suspicious_solids")
                 sus_output_folder.mkdir(parents=True, exist_ok=True)
                 if m.IsEnclosure:
-                    Part.CompSolid(m.Solids).exportStep(str(sus_output_folder / f"Enclosure_original_{i}.stp"))
+                    compsolid(m.Solids).exportStep(str(sus_output_folder / f"Enclosure_original_{i}.stp"))
                     comsolid.exportStep(str(sus_output_folder / f"Enclosure_split_{i}.stp"))
                 else:
-                    Part.CompSolid(m.Solids).exportStep(str(sus_output_folder / f"Solid_original_{i}.stp"))
+                    compsolid(m.Solids).exportStep(str(sus_output_folder / f"Solid_original_{i}.stp"))
                     comsolid.exportStep(str(sus_output_folder / f"Solid_split_{i}.stp"))
 
                 warningSolids.append(i)
