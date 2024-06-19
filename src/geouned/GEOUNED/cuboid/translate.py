@@ -4,6 +4,7 @@ import logging
 # import Part
 
 from OCC.Core.gp import gp_Vec
+from OCCUtils.Construct import compound
 
 from ..decompose import decom_one as Decom
 from ..utils import basic_functions_part2 as BF
@@ -104,7 +105,7 @@ def translate(meta_list, surfaces, universe_box, setting, options, tolerances, n
 
         surfaces.extend(
             Decom.extract_surfaces(
-                Part.makeCompound(m.Solids),
+                compound(m.Solids),
                 "Plane3Pts",
                 universe_box,
                 options,

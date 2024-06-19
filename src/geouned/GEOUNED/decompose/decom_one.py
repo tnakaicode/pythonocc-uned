@@ -123,6 +123,7 @@ def cut_full_cylinder(solid, options, tolerances, numeric_format):
     return out_solid
 
 
+from OCC.Core.Geom import Geom_Plane
 def gen_plane(pos, normal, diag):
     plane = Part.makePlane(diag, diag, pos, normal)
     vec_on_plane = plane.Vertexes[3].Point.sub(plane.Vertexes[0].Point)
