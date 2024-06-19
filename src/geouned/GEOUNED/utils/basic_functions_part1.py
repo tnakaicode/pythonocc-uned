@@ -41,7 +41,7 @@ class Plane3PtsParams(Params):
 
 class PlaneParams(Params):
 
-    def __init__(self, params, real=True):
+    def __init__(self, params=[gp_Pnt(0,0,0), gp_Ax3(), 100, 100], real=True):
         super().__init__()
         self.Position = params[0]
         self.Axis = params[1]
@@ -180,7 +180,8 @@ def is_in_tolerance(val, tol, fuzzy_low, fuzzy_high):
         return False, True
 
 
-def sign_plane(point, plane=PlaneParams()):
+def sign_plane(point, plane=Params()):
+    #plane.Axis.Direction().Dot(gp_Dir(gp_Vec(point, plane.Position).XYZ()))
     value = plane.Surf.Axis.dot(point - plane.Surf.Position)
     if value >= 0.0:
         sign = 1

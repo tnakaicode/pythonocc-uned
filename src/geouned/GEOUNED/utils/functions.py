@@ -17,6 +17,7 @@ from OCCUtils.Construct import make_box, make_polygon, make_face, compound
 logger = logging.getLogger("general_logger")
 
 from .basic_functions_part1 import (
+    Params,
     ConeParams,
     CylinderParams,
     Plane3PtsParams,
@@ -219,6 +220,9 @@ class GeounedSolid:
 
 
 class GeounedSurface:
+    
+    Type = None
+    Surf = Params()
 
     def __init__(self, params, boundBox, Face=None):
 

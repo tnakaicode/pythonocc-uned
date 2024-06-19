@@ -9,7 +9,10 @@ from collections import OrderedDict
 # import FreeCAD
 # import Part
 
+from OCCUtils.Construct import compound
+
 from ..conversion import cell_definition as CD
+from ..utils.data_classes import Options, Tolerances, NumericFormat, Settings
 from ..utils import functions as UF
 from ..utils import geometry_gu as GU
 from ..utils.basic_functions_part1 import (
@@ -25,7 +28,7 @@ logger = logging.getLogger("general_logger")
 twoPi = math.pi * 2
 
 
-def split_full_cylinder(solid, options, tolerances, numeric_format):
+def split_full_cylinder(solid, options=Options(), tolerances=Tolerances(), numeric_format=NumericFormat()):
     explode = []
     bases = [solid]
     while True:
@@ -41,10 +44,10 @@ def split_full_cylinder(solid, options, tolerances, numeric_format):
         else:
             bases = new_bases
 
-    return Part.makeCompound(explode)
+    return compound(explode)
 
 
-def cut_full_cylinder(solid, options, tolerances, numeric_format):
+def cut_full_cylinder(solid, options=Options(), tolerances=Tolerances(), numeric_format=NumericFormat()):
     solid_gu = GU.SolidGu(solid, tolerances=tolerances)
     surfaces = UF.SurfacesDict()
     flag_inv = CD.is_inverted(solid_gu.solid)
