@@ -1,6 +1,6 @@
 import typing
 # import FreeCAD
-import Import
+# import Import
 
 from pathlib import Path
 
@@ -105,9 +105,10 @@ class CsgToCad:
 
         if fails:
             print("failed in conversion", fails)
+        
+        # make file for FreeCAD
+        # CADdoc = FreeCAD.newDocument("converted_with_geouned")
 
-        CADdoc = FreeCAD.newDocument("converted_with_geouned")
-
-        makeTree(CADdoc, CADCells)
-        Import.export(CADdoc.Objects[0:1], f"{output_filename}.step")
-        CADdoc.saveAs(f"{output_filename}.FCStd")
+        # makeTree(CADdoc, CADCells)
+        # Import.export(CADdoc.Objects[0:1], f"{output_filename}.step")
+        # CADdoc.saveAs(f"{output_filename}.FCStd")
