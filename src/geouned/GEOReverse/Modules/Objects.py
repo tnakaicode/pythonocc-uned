@@ -4,8 +4,8 @@ import math
 import numpy as np
 # import Part
 
-from OCC.Core.gp import gp_Trsf, gp_Vec
-from OCC.Core.gp import gp_Cylinder, gp_Sphere
+from OCC.Core.gp import gp_Trsf, gp_Vec, gp_Ax3, gp_Dir
+from OCC.Core.gp import gp_Cylinder, gp_Sphere, gp_Cone
 from OCCUtils.Construct import make_box, make_face, make_polygon
 
 from .buildSolidCell import BuildSolid
@@ -262,7 +262,7 @@ class Plane:
 
 
 class Sphere:
-    def __init__(self, Id, params, tr=None):
+    def __init__(self, Id, params=[gp_Vec(0,0,1), 1], tr=None):
         self.type = "sphere"
         self.id = Id
         self.shape = None
@@ -280,11 +280,11 @@ class Sphere:
 
     def buildShape(self, boundBox):
         origin, R = self.params
-        self.shape = Part.makeSphere(R, origin)
+        self.shape = make_face(gp_Sphere(gp_Ax3(origin.XYZ(), gp_Dir(0,0,1)), R))
 
 
 class Cylinder:
-    def __init__(self, Id, params, tr=None, truncated=False):
+    def __init__(self, Id, params=[gp_Vec(0,0,0), gp_Vec(0,0,1), 1], tr=None, truncated=False):
         self.type = "cylinder"
         self.id = Id
         self.shape = None
