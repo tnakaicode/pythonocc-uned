@@ -18,6 +18,6 @@ setup_logger("fuzzy_logger", "geouned_fuzzy_log.log")
 setup_logger("solids_logger", "geouned_solids_log.log")
 
 
-__version__ = version("geouned")
+__version__ = "1.2.0" # version("geouned")
 
 __all__ = ["__version__"]
