@@ -168,7 +168,8 @@ tests_outputs/
 
 # debug output folders
 fuzzySurfaces
-Suspicious_solids/
+Suspicious_solids/*.stp
+suspicious_solids/*.stp
 Warning_Solids_definition.txt
 
 .vscode
