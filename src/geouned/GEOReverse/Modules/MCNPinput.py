@@ -6,6 +6,8 @@ import re
 import numpy as np
 from numpy import linalg as LA
 
+from OCC.Core.gp import gp_Trsf, gp_Vec
+
 from .Objects import (
     Box,
     CadCell,
@@ -179,9 +181,10 @@ class McnpInput:
 
 # fmt: off
 def getTransMatrix(trsf, unit="", scale=10.0):
+    trsfMat = gp_Trsf()
 
     if len(trsf) == 3:
-        trsfMat = FreeCAD.Matrix(
+        trsfMat.SetValues(
             1, 0, 0, trsf[0] * scale,
             0, 1, 0, trsf[1] * scale,
             0, 0, 1, trsf[2] * scale,
@@ -194,7 +197,7 @@ def getTransMatrix(trsf, unit="", scale=10.0):
         else:
             coeff = trsf[3:12]
 
-        trsfMat = FreeCAD.Matrix(
+        trsfMat.SetValues(
             coeff[0], coeff[3], coeff[6], trsf[0] * scale,
             coeff[1], coeff[4], coeff[7], trsf[1] * scale,
             coeff[2], coeff[5], coeff[8], trsf[2] * scale,
@@ -369,9 +372,10 @@ def processSurfaces(UCells, Surfaces):
 
 
 def getTransMatrix(trsf, unit="", scale=10.0):
+    trsfMat = gp_Trsf()
 
     if len(trsf) == 3:
-        trsfMat = FreeCAD.Matrix(
+        trsfMat.SetValues(
             1,
             0,
             0,
@@ -396,7 +400,7 @@ def getTransMatrix(trsf, unit="", scale=10.0):
         else:
             coeff = trsf[3:12]
 
-        trsfMat = FreeCAD.Matrix(
+        trsfMat.SetValues(
             coeff[0],
             coeff[3],
             coeff[6],
@@ -467,13 +471,13 @@ def getSubUniverses(Ustart, Universes):
 # Return a diccionary with the corresponding surface Object
 def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
 
-    X_vec = FreeCAD.Vector(1.0, 0.0, 0.0)
-    Y_vec = FreeCAD.Vector(0.0, 1.0, 0.0)
-    Z_vec = FreeCAD.Vector(0.0, 0.0, 1.0)
+    X_vec = gp_Vec(1.0, 0.0, 0.0)
+    Y_vec = gp_Vec(0.0, 1.0, 0.0)
+    Z_vec = gp_Vec(0.0, 0.0, 1.0)
     negX_vec = -X_vec
     negY_vec = -Y_vec
     negZ_vec = -Z_vec
-    origin = FreeCAD.Vector(0.0, 0.0, 0.0)
+    origin = gp_Vec(0.0, 0.0, 0.0)
 
     surfaces = {}
     for Sid in mcnp_surfaces.keys():
@@ -488,11 +492,11 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
             Stype = "plane"
             if MCNPtype == "P":
                 if len(MCNPparams) == 4:
-                    normal = FreeCAD.Vector(MCNPparams[0:3])
+                    normal = gp_Vec(*MCNPparams[0:3])
                     params = (normal, MCNPparams[3] * scale)
                 else:
                     coeffs = points_to_coeffs(MCNPparams[0:9])
-                    normal = FreeCAD.Vector(coeffs[0:3])
+                    normal = gp_Vec(*coeffs[0:3])
                     point = coeffs[3] / normal.Length
                     normal.normalize()
                     params = (normal, point * scale)
@@ -507,22 +511,22 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
             Stype = "sphere"
             if MCNPtype in ["S", "SPH"]:
                 params = (
-                    FreeCAD.Vector(MCNPparams[0:3]) * scale,
+                    gp_Vec(*MCNPparams[0:3]) * scale,
                     MCNPparams[3] * scale,
                 )
             elif MCNPtype == "SX":
                 params = (
-                    FreeCAD.Vector(MCNPparams[0] * scale, 0.0, 0.0),
+                    gp_Vec(*MCNPparams[0] * scale, 0.0, 0.0),
                     MCNPparams[1] * scale,
                 )
             elif MCNPtype == "SY":
                 params = (
-                    FreeCAD.Vector(0.0, MCNPparams[0] * scale, 0.0),
+                    gp_Vec(0.0, MCNPparams[0] * scale, 0.0),
                     MCNPparams[1] * scale,
                 )
             elif MCNPtype == "SZ":
                 params = (
-                    FreeCAD.Vector(0.0, 0.0, MCNPparams[0] * scale),
+                    gp_Vec(0.0, 0.0, MCNPparams[0] * scale),
                     MCNPparams[1] * scale,
                 )
             elif MCNPtype == "SO":
@@ -549,13 +553,13 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
                 p = origin
             elif MCNPtype == "C/X":
                 v = X_vec
-                p = FreeCAD.Vector(0.0, x1, x2)
+                p = gp_Vec(0.0, x1, x2)
             elif MCNPtype == "C/Y":
                 v = Y_vec
-                p = FreeCAD.Vector(x1, 0.0, x2)
+                p = gp_Vec(x1, 0.0, x2)
             elif MCNPtype == "C/Z":
                 v = Z_vec
-                p = FreeCAD.Vector(x1, x2, 0.0)
+                p = gp_Vec(x1, x2, 0.0)
 
             if scale != 1.0:
                 p = p.multiply(scale)
@@ -576,19 +580,19 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
                     dblsht = True
 
             if MCNPtype == "KX":
-                p = FreeCAD.Vector(x1, 0.0, 0.0)
+                p = gp_Vec(x1, 0.0, 0.0)
                 v = X_vec
                 if not dblsht:
                     if sht < 0:
                         v = negX_vec
             elif MCNPtype == "KY":
-                p = FreeCAD.Vector(0.0, x1, 0.0)
+                p = gp_Vec(0.0, x1, 0.0)
                 v = Y_vec
                 if not dblsht:
                     if sht < 0:
                         v = negY_vec
             elif MCNPtype == "KZ":
-                p = FreeCAD.Vector(0.0, 0.0, x1)
+                p = gp_Vec(0.0, 0.0, x1)
                 v = Z_vec
                 if not dblsht:
                     if sht < 0:
@@ -599,7 +603,7 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
 
         elif MCNPtype in ["K/X", "K/Y", "K/Z"]:
             Stype = "cone"
-            p = FreeCAD.Vector(MCNPparams[0:3])
+            p = gp_Vec(*MCNPparams[0:3])
             t2 = MCNPparams[3]
             t = math.sqrt(t2)
             dblsht = True
@@ -631,7 +635,7 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
 
         elif MCNPtype in ["TX", "TY", "TZ"]:
             Stype = "torus"
-            p = FreeCAD.Vector(MCNPparams[0:3])
+            p = gp_Vec(*MCNPparams[0:3])
             Ra, Rb, Rc = MCNPparams[3:6]
 
             if MCNPtype == "TX":
@@ -658,8 +662,8 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
                 Stype, quadric = gq2params(Qparams)
 
             if Stype == "cylinder":
-                # p = FreeCAD.Vector(quadric[0:3])
-                # v = FreeCAD.Vector(quadric[3:6])
+                # p = gp_Vec(quadric[0:3])
+                # v = gp_Vec(quadric[3:6])
                 # R = quadric[6]
                 p, v, R = quadric
                 if scale != 1.0:
@@ -685,8 +689,8 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
                 params = (p, v, radii, raxes)
 
             elif Stype == "cone":
-                # p = FreeCAD.Vector(quadric[0:3])
-                # v = FreeCAD.Vector(quadric[3:6])
+                # p = gp_Vec(quadric[0:3])
+                # v = gp_Vec(quadric[3:6])
                 # t = quadric[6]
                 # dblsht = quadric[7]
                 p, v, t, dblsht = quadric
@@ -743,7 +747,7 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
                     t = (MCNPparams[3] - MCNPparams[1]) / (MCNPparams[2] - MCNPparams[0])
                     x = MCNPparams[0] - MCNPparams[1] / t
                     if (MCNPparams[0] - x) * (MCNPparams[2] - x) > 0:
-                        p = FreeCAD.Vector(x, 0.0, 0.0)
+                        p = gp_Vec(x, 0.0, 0.0)
                         if (MCNPparams[0] - x) > 0:
                             v = X_vec
                         else:
@@ -775,7 +779,7 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
                     t = (MCNPparams[3] - MCNPparams[1]) / (MCNPparams[2] - MCNPparams[0])
                     y = MCNPparams[0] - MCNPparams[1] / t
                     if (MCNPparams[0] - y) * (MCNPparams[2] - y) > 0:
-                        p = FreeCAD.Vector(0.0, y, 0.0)
+                        p = gp_Vec(0.0, y, 0.0)
                         if (MCNPparams[0] - y) > 0:
                             v = Y_vec
                         else:
@@ -807,7 +811,7 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
                     t = (MCNPparams[3] - MCNPparams[1]) / (MCNPparams[2] - MCNPparams[0])
                     z = MCNPparams[0] - MCNPparams[1] / t
                     if (MCNPparams[0] - z) * (MCNPparams[2] - z) > 0:
-                        p = FreeCAD.Vector(0.0, 0.0, z)
+                        p = gp_Vec(0.0, 0.0, z)
                         if (MCNPparams[0] - z) > 0:
                             v = Z_vec
                         else:
@@ -830,10 +834,10 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
 
         elif MCNPtype == "BOX":
             Stype = "box"
-            p = FreeCAD.Vector(MCNPparams[0:3])
-            v1 = FreeCAD.Vector(MCNPparams[3:6])
-            v2 = FreeCAD.Vector(MCNPparams[6:9])
-            v3 = FreeCAD.Vector(MCNPparams[9:12])
+            p = gp_Vec(*MCNPparams[0:3])
+            v1 = gp_Vec(*MCNPparams[3:6])
+            v2 = gp_Vec(*MCNPparams[6:9])
+            v3 = gp_Vec(*MCNPparams[9:12])
             if scale != 1.0:
                 p = p.multiply(scale)
                 v1 = v1.multiply(scale)
@@ -847,10 +851,10 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
             lx = xmax - xmin
             ly = ymax - ymin
             lz = zmax - zmin
-            p = FreeCAD.Vector(xmin, ymin, zmin)
-            v1 = FreeCAD.Vector(lx, 0, 0)
-            v2 = FreeCAD.Vector(0, ly, 0)
-            v3 = FreeCAD.Vector(0, 0, lz)
+            p = gp_Vec(xmin, ymin, zmin)
+            v1 = gp_Vec(lx, 0, 0)
+            v2 = gp_Vec(0, ly, 0)
+            v3 = gp_Vec(0, 0, lz)
             if scale != 1.0:
                 p = p.multiply(scale)
                 v1 = v1.multiply(scale)
@@ -860,8 +864,8 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
 
         elif MCNPtype == "RCC":
             Stype = "can"
-            p = FreeCAD.Vector(MCNPparams[0:3])
-            v = FreeCAD.Vector(MCNPparams[3:6])
+            p = gp_Vec(*MCNPparams[0:3])
+            v = gp_Vec(*MCNPparams[3:6])
             R = MCNPparams[6]
             if scale != 1.0:
                 p = p.multiply(scale)
@@ -871,14 +875,14 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
 
         elif MCNPtype == "REC":
             Stype = "ecan"
-            p = FreeCAD.Vector(MCNPparams[0:3])
-            v = FreeCAD.Vector(MCNPparams[3:6])
-            majAxis = FreeCAD.Vector(MCNPparams[6:9])
+            p = gp_Vec(*MCNPparams[0:3])
+            v = gp_Vec(*MCNPparams[3:6])
+            majAxis = gp_Vec(*MCNPparams[6:9])
             majRad = majAxis.Length
             majAxis.normalize()
 
             if len(MCNPparams) == 12:
-                minAxis = FreeCAD.Vector(MCNPparams[9:12])
+                minAxis = gp_Vec(*MCNPparams[9:12])
                 minRad = minAxis.Length
                 minAxis.normalize()
             else:
@@ -899,8 +903,8 @@ def Get_primitive_surfaces(mcnp_surfaces, scale=10.0):
 
         elif MCNPtype == "TRC":
             Stype = "tcone"
-            p = FreeCAD.Vector(MCNPparams[0:3])
-            v = FreeCAD.Vector(MCNPparams[3:6])
+            p = gp_Vec(*MCNPparams[0:3])
+            v = gp_Vec(*MCNPparams[3:6])
             R1, R2 = MCNPparams[6:8]
             if scale != 1.0:
                 p = p.multiply(scale)
@@ -969,8 +973,8 @@ def points_to_coeffs(scf):
 
 def get_parabola_parameters(eVal, eVect, T, U):
     iaxis, comp = U[1]
-    center = FreeCAD.Vector(T)
-    axis = FreeCAD.Vector(eVect[iaxis][0])
+    center = gp_Vec(*T)
+    axis = gp_Vec(*eVect[iaxis][0])
     e1 = eVal[(iaxis + 1) % 3]
     focal = comp / (4 * e1)
     if focal < 0:
@@ -987,8 +991,8 @@ def get_cylinder_parameters(eVal, eVect, T, k, iaxis):
     eMin = eVal[other1]
     eMaj = eVal[other2]
 
-    axis = FreeCAD.Vector(np.transpose(eVect)[iaxis])
-    pos = FreeCAD.Vector(T)
+    axis = gp_Vec(*np.transpose(eVect)[iaxis])
+    pos = gp_Vec(*T)
     if abs(eMin - eMaj) < 1.0e-5:
         radius = float(np.sqrt(k / eMaj))
         return "cylinder", (pos, axis, radius)
@@ -1001,8 +1005,8 @@ def get_cylinder_parameters(eVal, eVect, T, k, iaxis):
 
         majorRad = float(np.sqrt(abs(k / eMaj)))
         minorRad = float(np.sqrt(abs(k / eMin)))
-        minorAxis = FreeCAD.Vector(eVect.T[iMin])  # define axis in global geometry
-        majorAxis = FreeCAD.Vector(eVect.T[iMaj])
+        minorAxis = gp_Vec(*eVect.T[iMin])  # define axis in global geometry
+        majorAxis = gp_Vec(*eVect.T[iMaj])
         if np.sign(eMaj) == np.sign(eMin):
             return "cylinder_elliptic", (
                 pos,
@@ -1031,10 +1035,10 @@ def get_cone_parameters(eVal, eVect, T, iaxis):
 
     other1 = (iaxis + 1) % 3
     other2 = (iaxis + 2) % 3
-    pos = FreeCAD.Vector(T)
+    pos = gp_Vec(*T)
 
     if abs(eVal[other1] - eVal[other2]) < 1e-5:
-        axis = FreeCAD.Vector(np.transpose(eVect)[iaxis])
+        axis = gp_Vec(*np.transpose(eVect)[iaxis])
         tan = float(np.sqrt(-eVal[other1] / eVal[iaxis]))
         return "cone", (pos, axis, tan, True)
     else:
@@ -1045,9 +1049,9 @@ def get_cone_parameters(eVal, eVect, T, iaxis):
                 other2 = (iaxis + 2) % 3
                 break
 
-        axis = FreeCAD.Vector(np.transpose(eVect)[iaxis])
-        minAxis = FreeCAD.Vector(np.transpose(eVect)[other1])
-        majAxis = FreeCAD.Vector(np.transpose(eVect)[other2])
+        axis = gp_Vec(*np.transpose(eVect)[iaxis])
+        minAxis = gp_Vec(*np.transpose(eVect)[other1])
+        majAxis = gp_Vec(*np.transpose(eVect)[other2])
         Ra = abs(1 / eVal[iaxis])
         Rmin = abs(1 / eVal[other1])
         Rmaj = abs(1 / eVal[other2])
@@ -1078,10 +1082,10 @@ def get_hyperboloid_parameters(eVal, eVect, T, k, iaxis):
     minorRad = float(np.sqrt(abs(k / eVal[other])))
     oneSheet = np.sign(k) != np.sign(eVal[iaxis])
 
-    axis = FreeCAD.Vector(np.transpose(eVect)[iaxis])
-    pos = FreeCAD.Vector(T)
-    minorAxis = FreeCAD.Vector(eVect.T[other])  # define axis in global geometry
-    majorAxis = FreeCAD.Vector(eVect.T[iaxis])
+    axis = gp_Vec(*np.transpose(eVect)[iaxis])
+    pos = gp_Vec(*T)
+    minorAxis = gp_Vec(*eVect.T[other])  # define axis in global geometry
+    majorAxis = gp_Vec(*eVect.T[iaxis])
 
     t = majorRad / minorRad
 
@@ -1129,9 +1133,9 @@ def get_ellipsoid_parameters(eVal, eVect, T, k):
 
     RMaj = float(np.sqrt(abs(k / eMaj)))
     RMin = float(np.sqrt(abs(k / eMin)))
-    majorAxis = FreeCAD.Vector(np.transpose(eVect)[iMaj])
-    minorAxis = FreeCAD.Vector(np.transpose(eVect)[iMin])
-    pos = FreeCAD.Vector(T)
+    majorAxis = gp_Vec(*np.transpose(eVect)[iMaj])
+    minorAxis = gp_Vec(*np.transpose(eVect)[iMin])
+    pos = gp_Vec(*T)
 
     t = RMaj / RMin
     if t > cylTan:

@@ -237,6 +237,7 @@ def BuildSolidParts(cell, base, mode):
 
 
 def FuseSolid(parts):
+    from OCCUtils.Construct import compound
     if (len(parts)) <= 1:
         if parts:
             solid = parts[0]
@@ -260,9 +261,9 @@ def FuseSolid(parts):
                 if fused.isValid():
                     solid = fused
                 else:
-                    solid = Part.makeCompound(parts)
+                    solid = compound(parts)
         else:
-            solid = Part.makeCompound(parts)
+            solid = compound(parts)
 
     if solid.Volume < 0:
         solid.reverse()
