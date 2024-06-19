@@ -2,6 +2,7 @@ import os, sys
 from pathlib import Path
 
 import pytest
+print(sys.base_prefix)
 
 sys.path.append(os.path.join("./src/"))
 import geouned

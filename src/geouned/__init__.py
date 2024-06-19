@@ -4,10 +4,10 @@ from importlib.metadata import version
 # package name for FreeCAD (mixed case) upon import the conda package appends
 # the sys path for Conda installed FreeCAD, consequently FreeCAD can then be
 # found by subsequent import statements through out the code base
-# try:
-#     import freecad
-# except ImportError:
-#     pass
+try:
+    import freecad
+except ImportError:
+    pass
 
 from .GEOReverse import *
 from .GEOUNED import *

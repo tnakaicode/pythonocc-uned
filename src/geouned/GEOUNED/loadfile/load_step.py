@@ -5,9 +5,9 @@ import logging
 import os
 import re
 
-# import FreeCAD
-# import Part
-# from FreeCAD import Import
+import FreeCAD
+import Part
+from FreeCAD import Import
 
 from ..utils import functions as UF
 from . import load_functions as LF
