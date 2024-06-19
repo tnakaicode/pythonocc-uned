@@ -28,7 +28,7 @@ from .basic_functions_part1 import (
 from . import basic_functions_part2 as BF
 
 
-def get_aligned_boundingbox_ratio(shape, tol=1e-6, optimal_BB=True, ratio=1):
+def get_boundingbox(shape, tol=1e-6, optimal_BB=True):
     """ return the bounding box of the TopoDS_Shape `shape`
 
     Parameters
@@ -43,15 +43,6 @@ def get_aligned_boundingbox_ratio(shape, tol=1e-6, optimal_BB=True, ratio=1):
     use_triangulation : bool, True by default
         This makes the computation more accurate
 
-    ratio : float, 1.0 by default.
-
-    Returns
-    -------
-        if `as_pnt` is True, return a tuple of gp_Pnt instances
-         for the lower and another for the upper X,Y,Z values representing the bounding box
-
-        if `as_pnt` is False, return a tuple of lower and then upper X,Y,Z values
-         representing the bounding box
     """
     bbox = Bnd_Box()
     bbox.SetGap(tol)
@@ -65,42 +56,20 @@ def get_aligned_boundingbox_ratio(shape, tol=1e-6, optimal_BB=True, ratio=1):
     else:
         brepbndlib.Add(shape, bbox)
 
-    xmin, ymin, zmin, xmax, ymax, zmax = bbox.Get()
-    dx, mx = (xmax - xmin) * ratio, (xmax + xmin) / 2
-    dy, my = (ymax - ymin) * ratio, (ymax + ymin) / 2
-    dz, mz = (zmax - zmin) * ratio, (zmax + zmin) / 2
-    x0, x1 = mx - dx / 2, mx + dx / 2
-    y0, y1 = my - dy / 2, my + dy / 2
-    z0, z1 = mz - dz / 2, mz + dz / 2
-    corner1 = gp_Pnt(x0, y0, z0)
-    corner2 = gp_Pnt(x1, y1, z1)
+    return bbox
 
 
-def get_boundingbox(shape, tol=1e-6):
-    """
-    :param shape: TopoDS_Shape such as TopoDS_Face
-    :param tol: tolerance
-    :return: xmin, ymin, zmin, xmax, ymax, zmax
-    """
-    bbox = Bnd_Box()
-    bbox.SetGap(tol)
-    brepbndlib.Add(shape, bbox)
-    xmin, ymin, zmin, xmax, ymax, zmax = bbox.Get()
-    return xmin, ymin, zmin, xmax, ymax, zmax
+def get_box(comp, enlargeBox=2.0):
+    bb = get_boundingbox(comp)
+    bb.Enlarge(enlargeBox)
+    xmin, ymin, zmin, xmax, ymax, zmax = bb.Get()
+    xLength, yLength, zLength = xmax - xmin, ymax - ymin, zmax - zmin
 
-
-def get_box(comp, enlargeBox):
-    bb = FreeCAD.BoundBox(comp.BoundBox)
-    bb.enlarge(enlargeBox)
-    xMin, yMin, zMin = bb.XMin, bb.YMin, bb.ZMin
-    xLength, yLength, zLength = bb.XLength, bb.YLength, bb.ZLength
-
-    return Part.makeBox(
+    return make_box(
+        gp_Ax2(gp_Pnt(xmin, ymin, zmin), gp_Dir(0, 0, 1)),
         xLength,
         yLength,
-        zLength,
-        gp_Vec(xMin, yMin, zMin),
-        gp_Vec(0, 0, 1),
+        zLength
     )
 
 
