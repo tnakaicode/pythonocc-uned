@@ -1,7 +1,7 @@
 import logging
 import re
 
-# import FreeCAD
+import FreeCAD
 
 from ..utils.functions import GeounedSolid
 

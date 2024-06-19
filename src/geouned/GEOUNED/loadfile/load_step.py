@@ -79,42 +79,47 @@ def load_cad(filename, settings, options):
     step_reader = STEPControl_Reader()
     status = step_reader.ReadFile(filename)
 
-    if status != IFSelect_RetDone:
-        raise AssertionError("Error: can't read file.")
-    if verbosity:
-        failsonly = False
-        step_reader.PrintCheckLoad(failsonly, IFSelect_ItemsByEntity)
-        step_reader.PrintCheckTransfer(failsonly, IFSelect_ItemsByEntity)
-    transfer_result = step_reader.TransferRoots()
-    if not transfer_result:
-        raise AssertionError("Transfer failed.")
-    _nbs = step_reader.NbShapes()
-    if _nbs == 0:
-        raise AssertionError("No shape to transfer.")
-    if _nbs == 1:  # most cases
-        return step_reader.Shape(1)
+    # if status != IFSelect_RetDone:
+    #     raise AssertionError("Error: can't read file.")
+    # if verbosity:
+    #     failsonly = False
+    #     step_reader.PrintCheckLoad(failsonly, IFSelect_ItemsByEntity)
+    #     step_reader.PrintCheckTransfer(failsonly, IFSelect_ItemsByEntity)
+    # transfer_result = step_reader.TransferRoots()
+    # if not transfer_result:
+    #     raise AssertionError("Transfer failed.")
+    # _nbs = step_reader.NbShapes()
+    # if _nbs == 0:
+    #     raise AssertionError("No shape to transfer.")
+    # if _nbs == 1:  # most cases
+    #     return step_reader.Shape(1)
 
-    meta_list = []
-    for k in range(1, _nbs + 1):
-        meta_list.append(UF.GeounedSolid(i + 1, step_reader.Shape(k)))
+    #meta_list = []
+    #for k in range(1, _nbs + 1):
+    #    meta_list.append(UF.GeounedSolid(i + 1, step_reader.Shape(k)))
 
     # Set document solid tree options when opening CAD differing from version 0.18
-    # if int(FreeCAD.Version()[1]) > 18:
-    #     LF.set_doc_options()
+    if int(FreeCAD.Version()[1]) > 18:
+        LF.set_doc_options()
 
-    # cad_simplificado_doc = FreeCAD.newDocument("CAD_simplificado")
-    # Import.insert(filename, "CAD_simplificado")
+    cad_simplificado_doc = FreeCAD.newDocument("CAD_simplificado")
+    Import.insert(filename, "CAD_simplificado")
 
-    # s = Part.Shape()
-    # s.read(filename)
-    # Solids = s.Solids
+    s = Part.Shape()
+    s.read(filename)
+    Solids = s.Solids
+    meta_list = []
+    for i, s in enumerate(Solids):
+        meta_list.append(UF.GeounedSolid(i + 1, s))
 
     i_solid = 0
     missing_mat = set()
 
     doc_objects = cad_simplificado_doc.Objects
-
     for elem in doc_objects:
+        # elem : <Part::PartFeature>
+        # https://free-cad.sourceforge.net/SrcDocu/d7/d7e/classPart_1_1Feature.html
+        # elem.Content : '    <Properties Count="6" TransientCount="0">\n        <Property name="ExpressionEngine" type="App::PropertyExpressionEngine" status="67108864">\n            <ExpressionEngine count="0">\n            </ExpressionEngine>\n        </Property>\n        <Property name="Label" type="App::PropertyString" status="134217729">\n            <String value="Component90"/>\n        </Property>\n        <Property name="Label2" type="App::PropertyString" status="67108992">\n            <String value=""/>\n        </Property>\n        <Property name="Placement" type="App::PropertyPlacement" status="8388609">\n            <PropertyPlacement Px="0" Py="0" Pz="0" Q0="0" Q1="0" Q2="0" Q3="1" A="0" Ox="0" Oy="0" Oz="1"/>\n        </Property>\n        <Property name="Shape" type="Part::PropertyPartShape" status="1">\n        </Property>\n        <Property name="Visibility" type="App::PropertyBool" status="649">\n            <Bool value="true"/>\n        </Property>\n    </Properties>\n'
         if elem.TypeId == "Part::Feature":
             comment = LF.getCommentTree(elem, options)
             if not elem.Shape.Solids:
