@@ -8,7 +8,9 @@ import math
 # import FreeCAD
 import numpy as np
 # import Part
-from OCC.Core.gp import gp_Vec
+from OCC.Core.gp import gp_Pnt, gp_Vec, gp_Dir
+from OCC.Core.gp import gp_Ax1, gp_Ax2, gp_Ax3
+from OCCUtils.Construct import make_box
 
 logger = logging.getLogger("general_logger")
 
@@ -22,6 +24,19 @@ from .basic_functions_part1 import (
     is_parallel,
 )
 from . import basic_functions_part2 as BF
+
+
+def get_boundingbox(shape, tol=TOLERANCE):
+    """
+    :param shape: TopoDS_Shape such as TopoDS_Face
+    :param tol: tolerance
+    :return: xmin, ymin, zmin, xmax, ymax, zmax
+    """
+    bbox = Bnd_Box()
+    bbox.SetGap(tol)
+    brepbndlib_Add(shape, bbox)
+    xmin, ymin, zmin, xmax, ymax, zmax = bbox.Get()
+    return xmin, ymin, zmin, xmax, ymax, zmax
 
 
 def get_box(comp, enlargeBox):
@@ -158,7 +173,8 @@ class GeounedSolid:
                 try:
                     distShape = sol1.distToShape(sol2)[0]
                 except:
-                    logger.info("Failed solid1.distToshape(solid2), try with inverted solids")
+                    logger.info(
+                        "Failed solid1.distToshape(solid2), try with inverted solids")
                     distShape = sol2.distToShape(sol1)[0]
                     logger.info(f"inverted disToShape OK {distShape}")
                 dist = min(dist, distShape)
@@ -187,10 +203,12 @@ class GeounedSurface:
         self.__boundBox__ = boundBox
         if params[0] == "Plane":
             self.Type = "Plane"
-            self.Surf = PlaneParams(params[1])  # plane point defined as the shortest distance to origin
+            # plane point defined as the shortest distance to origin
+            self.Surf = PlaneParams(params[1])
         elif params[0] == "Plane3Pts":
             self.Type = "Plane"
-            self.Surf = Plane3PtsParams(params[1])  # plane point defined with 3 points
+            # plane point defined with 3 points
+            self.Surf = Plane3PtsParams(params[1])
         elif params[0] == "Cylinder":
             self.Type = params[0]
             self.Surf = CylinderParams(params[1])
@@ -257,7 +275,8 @@ class GeounedSurface:
                 orden.append((phi, i))
             orden.sort()
 
-            self.shape = Part.Face(Part.makePolygon([pointEdge[p[1]] for p in orden], True))
+            self.shape = Part.Face(Part.makePolygon(
+                [pointEdge[p[1]] for p in orden], True))
 
             return
 
@@ -335,7 +354,8 @@ class SurfacesDict(dict):
                 self[key] = surfaces[key][:]
                 self.__surfIndex__[key] = surfaces.__surfIndex__[key][:]
             self.surfaceNumber = surfaces.surfaceNumber
-            self.__last_obj__ = (surfaces.__last_obj__[0], surfaces.__last_obj__[1])
+            self.__last_obj__ = (surfaces.__last_obj__[
+                                 0], surfaces.__last_obj__[1])
         else:
             self.surfaceNumber = 0
             self.__last_obj__ = ("", -1)
@@ -585,19 +605,24 @@ class SurfacesDict(dict):
 def split_bop(solid, tools, tolerance, options, scale=0.1):
 
     if tolerance >= 0.1:
-        compSolid = BOPTools.SplitAPI.slice(solid, tools, "Split", tolerance=tolerance)
+        compSolid = BOPTools.SplitAPI.slice(
+            solid, tools, "Split", tolerance=tolerance)
 
     elif tolerance < 1e-12:
         if options.scaleUp:
             tol = 1e-13 if options.splitTolerance == 0 else options.splitTolerance
-            compSolid = split_bop(solid, tools, tol / scale, options, 1.0 / scale)
+            compSolid = split_bop(solid, tools, tol /
+                                  scale, options, 1.0 / scale)
         else:
-            compSolid = BOPTools.SplitAPI.slice(solid, tools, "Split", tolerance=tolerance)
+            compSolid = BOPTools.SplitAPI.slice(
+                solid, tools, "Split", tolerance=tolerance)
 
     else:
         try:
-            compSolid = BOPTools.SplitAPI.slice(solid, tools, "Split", tolerance=tolerance)
+            compSolid = BOPTools.SplitAPI.slice(
+                solid, tools, "Split", tolerance=tolerance)
         except:
-            compSolid = split_bop(solid, tools, tolerance * scale, options, scale)
+            compSolid = split_bop(
+                solid, tools, tolerance * scale, options, scale)
 
     return compSolid

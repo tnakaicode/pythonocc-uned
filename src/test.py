@@ -80,7 +80,7 @@ if __name__ == '__main__':
         numeric_format=my_numeric_format,
     )
     
-    step_file = f"../testing/inputSTEP/BC.stp"
+    step_file = f"../testing/inputSTEP/large/Triangle.stp"
     read_step_file_with_names_colors(step_file)
     geo.load_step_file(filename=step_file, skip_solids=[])
 
