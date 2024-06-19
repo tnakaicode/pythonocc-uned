@@ -10,8 +10,8 @@ from importlib.metadata import version
 # import Part
 from tqdm import tqdm
 
-from OCC.Core.gp import gp_Vec
-from OCCUtils.Construct import compound
+from OCC.Core.gp import gp_Vec, gp_Pnt
+from OCCUtils.Construct import compound, make_box
 from .utils_occ.Construct import compsolid
 
 from .code_version import *
@@ -342,7 +342,7 @@ class CadToCsg:
             if m.IsEnclosure:
                 continue
             solids.extend(m.Solids)
-        Part.makeCompound(solids).exportStep(filename)
+        compound(solids).exportStep(filename)
 
     def _get_geometry_bounding_box(self, padding: float = 10.0):
         """
@@ -376,9 +376,9 @@ class CadToCsg:
             zmin = min(m.BoundBox.ZMin, zmin)
             zmax = max(m.BoundBox.ZMax, zmax)
 
-        self.geometry_bounding_box = FreeCAD.BoundBox(
-            gp_Vec(xmin - padding, ymin - padding, zmin - padding),
-            gp_Vec(xmax + padding, ymax + padding, zmax + padding),
+        self.geometry_bounding_box = make_box(
+            gp_Pnt(xmin - padding, ymin - padding, zmin - padding),
+            gp_Pnt(xmax + padding, ymax + padding, zmax + padding),
         )
         return self.geometry_bounding_box
 
