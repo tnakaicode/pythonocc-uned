@@ -32,13 +32,44 @@ def extract_materials(filename):
 
 
 def load_cad(filename, settings, options):
+    
+    from OCC.Extend.DataExchange import read_step_file_with_names_colors
+    from OCC.Core.TDocStd import TDocStd_Document
+    from OCC.Core.XCAFDoc import XCAFDoc_DocumentTool
+    from OCC.Core.STEPCAFControl import STEPCAFControl_Reader
+    from OCC.Core.IFSelect import IFSelect_RetDone
+
+    if not os.path.isfile(filename):
+        raise FileNotFoundError(f"{filename} not found.")
+    # the list:
+    output_shapes = {}
+
+    # create an handle to a document
+    doc = TDocStd_Document("CAD_simplificado")
+
+    # Get root assembly
+    shape_tool = XCAFDoc_DocumentTool.ShapeTool(doc.Main())
+    color_tool = XCAFDoc_DocumentTool.ColorTool(doc.Main())
+    # layer_tool = XCAFDoc_DocumentTool_LayerTool(doc.Main())
+    # mat_tool = XCAFDoc_DocumentTool_MaterialTool(doc.Main())
+
+    step_reader = STEPCAFControl_Reader()
+    step_reader.SetColorMode(True)
+    step_reader.SetLayerMode(True)
+    step_reader.SetNameMode(True)
+    step_reader.SetMatMode(True)
+    step_reader.SetGDTMode(True)
+
+    status = step_reader.ReadFile(filename)
+    if status == IFSelect_RetDone:
+        step_reader.Transfer(doc)
 
     # Set document solid tree options when opening CAD differing from version 0.18
-    if int(FreeCAD.Version()[1]) > 18:
-        LF.set_doc_options()
+    # if int(FreeCAD.Version()[1]) > 18:
+    #     LF.set_doc_options()
 
-    cad_simplificado_doc = FreeCAD.newDocument("CAD_simplificado")
-    Import.insert(filename, "CAD_simplificado")
+    # cad_simplificado_doc = FreeCAD.newDocument("CAD_simplificado")
+    # Import.insert(filename, "CAD_simplificado")
 
     if settings.matFile != "":
         if os.path.exists(settings.matFile):
