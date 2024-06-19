@@ -10,6 +10,8 @@ import numpy as np
 # import Part
 from OCC.Core.gp import gp_Pnt, gp_Vec, gp_Dir
 from OCC.Core.gp import gp_Ax1, gp_Ax2, gp_Ax3
+from OCC.Core.Bnd import Bnd_Box
+from OCC.Core.BRepBndLib import brepbndlib
 from OCCUtils.Construct import make_box
 
 logger = logging.getLogger("general_logger")
@@ -26,7 +28,55 @@ from .basic_functions_part1 import (
 from . import basic_functions_part2 as BF
 
 
-def get_boundingbox(shape, tol=TOLERANCE):
+def get_aligned_boundingbox_ratio(shape, tol=1e-6, optimal_BB=True, ratio=1):
+    """ return the bounding box of the TopoDS_Shape `shape`
+
+    Parameters
+    ----------
+
+    shape : TopoDS_Shape or a subclass such as TopoDS_Face
+        the shape to compute the bounding box from
+
+    tol: float
+        tolerance of the computed boundingbox
+
+    use_triangulation : bool, True by default
+        This makes the computation more accurate
+
+    ratio : float, 1.0 by default.
+
+    Returns
+    -------
+        if `as_pnt` is True, return a tuple of gp_Pnt instances
+         for the lower and another for the upper X,Y,Z values representing the bounding box
+
+        if `as_pnt` is False, return a tuple of lower and then upper X,Y,Z values
+         representing the bounding box
+    """
+    bbox = Bnd_Box()
+    bbox.SetGap(tol)
+
+    # note: useTriangulation is True by default, we set it explicitely, but t's not necessary
+    if optimal_BB:
+        use_triangulation = True
+        use_shapetolerance = True
+        brepbndlib.AddOptimal(
+            shape, bbox, use_triangulation, use_shapetolerance)
+    else:
+        brepbndlib.Add(shape, bbox)
+
+    xmin, ymin, zmin, xmax, ymax, zmax = bbox.Get()
+    dx, mx = (xmax - xmin) * ratio, (xmax + xmin) / 2
+    dy, my = (ymax - ymin) * ratio, (ymax + ymin) / 2
+    dz, mz = (zmax - zmin) * ratio, (zmax + zmin) / 2
+    x0, x1 = mx - dx / 2, mx + dx / 2
+    y0, y1 = my - dy / 2, my + dy / 2
+    z0, z1 = mz - dz / 2, mz + dz / 2
+    corner1 = gp_Pnt(x0, y0, z0)
+    corner2 = gp_Pnt(x1, y1, z1)
+
+
+def get_boundingbox(shape, tol=1e-6):
     """
     :param shape: TopoDS_Shape such as TopoDS_Face
     :param tol: tolerance
@@ -34,7 +84,7 @@ def get_boundingbox(shape, tol=TOLERANCE):
     """
     bbox = Bnd_Box()
     bbox.SetGap(tol)
-    brepbndlib_Add(shape, bbox)
+    brepbndlib.Add(shape, bbox)
     xmin, ymin, zmin, xmax, ymax, zmax = bbox.Get()
     return xmin, ymin, zmin, xmax, ymax, zmax
 
