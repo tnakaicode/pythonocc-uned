@@ -207,7 +207,10 @@ def test_conversion_all():
     )
 
     geo.load_step_file(
-        filename=[f"{f.resolve()}" for f in step_files][0:6], skip_solids=[])
+        filename=[f"{f.resolve()}" for f in step_files][0:10], skip_solids=[])
+
+    #geo.load_step_file(
+    #    filename=[f"{f.resolve()}" for f in step_files][11:15], skip_solids=[])
 
     geo.start()
 
@@ -222,11 +225,11 @@ def test_conversion_all():
             "mcnp",
         ),
         volSDEF=True,  # changed from the default
-        volCARD=False,  # changed from the default
+        volCARD=True,  # changed from the default
         UCARD=None,
         dummyMat=True,  # changed from the default
-        cellCommentFile=False,
-        cellSummaryFile=False,  # changed from the default
+        cellCommentFile=True,
+        cellSummaryFile=True,  # changed from the default
     )
 
     # for suffix in suffixes:

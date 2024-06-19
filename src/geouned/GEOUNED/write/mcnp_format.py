@@ -117,9 +117,19 @@ C Version : 1.2.0
 C FreeCAD Version : {freeCAD_Version} 
 """
 
+        step_files = f"""C Original Step file : {self.step_filename.split(";")[0]}
+""".rstrip("\n")
+
+        for f in self.step_filename.split(";")[1:]:
+            step_files += f"""
+C Original Step file :{f}
+""".rstrip("\n")
+            
         Information = f"""C
 C *************************************************************
 C Original Step file : {self.step_filename}
+C 
+{step_files}
 C
 C Creation Date : {datetime.now()}
 C Solid Cells   : {self.__solidCells__}

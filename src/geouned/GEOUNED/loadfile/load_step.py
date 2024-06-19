@@ -63,6 +63,7 @@ def load_cad(filename, settings, options):
 
     for elem in doc_objects:
         if elem.TypeId == "Part::Feature":
+            # https://free-cad.sourceforge.net/SrcDocu/d7/d7e/classPart_1_1Feature.html
             comment = LF.getCommentTree(elem, options)
             if not elem.Shape.Solids:
                 logger.warning("Element {:} has no associated solid".format(comment + "/" + elem.Label))
