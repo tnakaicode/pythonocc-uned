@@ -1,4 +1,4 @@
-import Part
+# import Part
 
 from .options import Options
 from .splitFunction import SplitBase, SplitSolid, joinBase

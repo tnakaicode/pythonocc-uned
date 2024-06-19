@@ -7,7 +7,7 @@ from typing import get_type_hints
 from importlib.metadata import version
 
 # import FreeCAD
-import Part
+# import Part
 from tqdm import tqdm
 
 from .code_version import *

@@ -2,7 +2,7 @@ import math
 
 import BOPTools.SplitAPI
 # import FreeCAD
-import Part
+# import Part
 
 
 class SplitBase:

@@ -3,7 +3,7 @@
 import logging
 
 # import FreeCAD
-import Part
+# import Part
 
 from ..conversion import cell_definition as Conv
 from ..decompose import decom_one as Decom

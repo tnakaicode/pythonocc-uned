@@ -7,7 +7,7 @@ import math
 import BOPTools.SplitAPI
 # import FreeCAD
 import numpy as np
-import Part
+# import Part
 
 logger = logging.getLogger("general_logger")
 

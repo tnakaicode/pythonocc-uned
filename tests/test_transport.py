@@ -13,7 +13,7 @@ from pathlib import Path
 # except:
 #     pass
 import openmc
-import Part
+# import Part
 import pytest
 from FreeCAD import Import
 

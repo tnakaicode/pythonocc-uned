@@ -2,7 +2,7 @@ import math
 
 # import FreeCAD
 import numpy as np
-import Part
+# import Part
 
 from .buildSolidCell import BuildSolid
 from .remh import Cline

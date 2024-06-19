@@ -7,7 +7,7 @@ import math
 from collections import OrderedDict
 
 # import FreeCAD
-import Part
+# import Part
 
 from ..conversion import cell_definition as CD
 from ..utils import functions as UF

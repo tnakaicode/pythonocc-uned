@@ -6,7 +6,7 @@ import os
 import re
 
 # import FreeCAD
-import Part
+# import Part
 from FreeCAD import Import
 
 from ..utils import functions as UF

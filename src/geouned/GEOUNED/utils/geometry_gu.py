@@ -8,7 +8,7 @@
 import logging
 import math
 
-import Part
+# import Part
 
 from .basic_functions_part1 import is_same_value
 from .basic_functions_part2 import is_same_torus

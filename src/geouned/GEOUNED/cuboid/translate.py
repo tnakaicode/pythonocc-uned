@@ -1,7 +1,7 @@
 import logging
 
 # import FreeCAD
-import Part
+# import Part
 
 from ..decompose import decom_one as Decom
 from ..utils import basic_functions_part2 as BF

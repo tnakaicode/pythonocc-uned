@@ -15,7 +15,7 @@ from pathlib import Path
 #     pass
 import geouned
 import openmc
-import Part
+# import Part
 import pytest
 from FreeCAD import Import
 

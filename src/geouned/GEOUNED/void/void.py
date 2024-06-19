@@ -1,7 +1,7 @@
 import logging
 
 # import FreeCAD
-import Part
+# import Part
 from tqdm import tqdm
 
 from ..loadfile import load_functions as LF
