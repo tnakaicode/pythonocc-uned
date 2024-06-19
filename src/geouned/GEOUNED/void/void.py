@@ -1,6 +1,6 @@
 import logging
 
-import FreeCAD
+# import FreeCAD
 import Part
 from tqdm import tqdm
 

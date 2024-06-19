@@ -4,7 +4,7 @@
 import logging
 import math
 
-import FreeCAD
+# import FreeCAD
 import Part
 
 from ..utils import basic_functions_part2 as BF

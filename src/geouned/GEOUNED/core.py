@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import get_type_hints
 from importlib.metadata import version
 
-import FreeCAD
+# import FreeCAD
 import Part
 from tqdm import tqdm
 

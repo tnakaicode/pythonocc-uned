@@ -8,10 +8,10 @@ import os
 import sys
 from pathlib import Path
 
-try:
-    import freecad  # importing conda package if present
-except:
-    pass
+# try:
+#     import freecad  # importing conda package if present
+# except:
+#     pass
 import openmc
 import Part
 import pytest

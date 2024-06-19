@@ -1,5 +1,5 @@
 import typing
-import FreeCAD
+# import FreeCAD
 import Import
 
 from pathlib import Path

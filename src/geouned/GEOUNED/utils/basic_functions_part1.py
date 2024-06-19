@@ -3,7 +3,7 @@
 #
 import math
 
-import FreeCAD
+# import FreeCAD
 
 
 def is_same_value(v1, v2, tolerance=1e-6):

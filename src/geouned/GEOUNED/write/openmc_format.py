@@ -5,7 +5,7 @@
 import logging
 from pathlib import Path
 
-import FreeCAD
+# import FreeCAD
 
 from ..code_version import *
 from ..utils.functions import SurfacesDict

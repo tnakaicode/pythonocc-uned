@@ -4,7 +4,7 @@
 import logging
 import math
 
-import FreeCAD
+# import FreeCAD
 
 from .basic_functions_part1 import (
     is_in_line,

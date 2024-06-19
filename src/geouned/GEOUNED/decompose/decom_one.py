@@ -6,7 +6,7 @@ import logging
 import math
 from collections import OrderedDict
 
-import FreeCAD
+# import FreeCAD
 import Part
 
 from ..conversion import cell_definition as CD

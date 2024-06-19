@@ -5,7 +5,7 @@ import logging
 import math
 
 import BOPTools.SplitAPI
-import FreeCAD
+# import FreeCAD
 import numpy as np
 import Part
 

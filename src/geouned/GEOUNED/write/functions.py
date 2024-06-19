@@ -1,7 +1,7 @@
 import math
 import re
 
-import FreeCAD
+# import FreeCAD
 
 from ..utils import q_form as q_form
 from ..utils.basic_functions_part1 import is_opposite, is_parallel

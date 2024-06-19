@@ -5,7 +5,7 @@ import logging
 import os
 import re
 
-import FreeCAD
+# import FreeCAD
 import Part
 from FreeCAD import Import
 

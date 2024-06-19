@@ -1,7 +1,7 @@
 import math
 
 import BOPTools.SplitAPI
-import FreeCAD
+# import FreeCAD
 import Part
 
 

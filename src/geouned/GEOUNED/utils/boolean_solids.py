@@ -5,7 +5,7 @@
 import logging
 import math
 
-import FreeCAD
+# import FreeCAD
 
 from .boolean_function import BoolSequence
 from .functions import GeounedSurface, split_bop

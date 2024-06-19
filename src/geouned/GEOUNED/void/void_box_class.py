@@ -2,7 +2,7 @@
 
 import logging
 
-import FreeCAD
+# import FreeCAD
 import Part
 
 from ..conversion import cell_definition as Conv

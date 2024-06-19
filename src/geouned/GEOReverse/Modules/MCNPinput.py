@@ -2,7 +2,7 @@ import math
 import os
 import re
 
-import FreeCAD
+# import FreeCAD
 import numpy as np
 from numpy import linalg as LA
 

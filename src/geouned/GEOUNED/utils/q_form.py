@@ -6,7 +6,7 @@
 
 import math
 
-import FreeCAD
+# import FreeCAD
 
 
 def rotation_matrix(u, v):

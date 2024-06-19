@@ -1,6 +1,6 @@
 import math
 
-import FreeCAD
+# import FreeCAD
 import numpy as np
 import Part
 
