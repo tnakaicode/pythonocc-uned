@@ -38,6 +38,7 @@ def load_cad(filename, settings, options):
         LF.set_doc_options()
 
     cad_simplificado_doc = FreeCAD.newDocument("CAD_simplificado")
+    # https://free-cad.sourceforge.net/SrcDocu/d8/d3e/classApp_1_1Document.html
     Import.insert(filename, "CAD_simplificado")
 
     if settings.matFile != "":
@@ -60,9 +61,30 @@ def load_cad(filename, settings, options):
     missing_mat = set()
 
     doc_objects = cad_simplificado_doc.Objects
-
+    # DocumentObject * Document::getObject	(	const char * 	Name	 ) 	const
+    # const char * Document::getObjectName	(	DocumentObject * 	pFeat	 ) 	const
+    # std::vector< DocumentObject * > Document::getObjects	(		 ) 	const
+    # https://free-cad.sourceforge.net/SrcDocu/da/d25/App_2Document_8cpp_source.html#l01573
+    # https://free-cad.sourceforge.net/SrcDocu/da/d25/App_2Document_8cpp_source.html#l00131
+    
+    # [<Part::PartFeature>, 
+    #  <Part object>, 
+    #  <App::Origin object>, 
+    #  <GeoFeature object>, 
+    #  <GeoFeature object>, <GeoFeature object>, <GeoFeature object>, <GeoFeature object>, 
+    #  <Part::PartFeature>, 
+    #  <Part object>, 
+    #  <App::Origin object>, 
+    #  <GeoFeature object>, 
+    #  <GeoFeature object>, <GeoFeature object>, <GeoFeature object>, <GeoFeature object>, <GeoFeature object>
+    #  ]
+    
+    # GeoFeature <-- Part::Feature
+    # Part::PartFeaturePy
+    
     for elem in doc_objects:
-        if elem.TypeId == "Part::Feature":
+        print(elem.TypeId)
+        if elem.TypeId == "Part::Feature" or elem.TypeId == "GeoFeature":
             # https://free-cad.sourceforge.net/SrcDocu/d7/d7e/classPart_1_1Feature.html
             comment = LF.getCommentTree(elem, options)
             if not elem.Shape.Solids:

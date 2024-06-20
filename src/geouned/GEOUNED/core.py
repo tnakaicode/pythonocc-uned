@@ -339,6 +339,14 @@ class CadToCsg:
                 continue
             solids.extend(m.Solids)
         Part.makeCompound(solids).exportStep(filename)
+        # https://free-cad.sourceforge.net/SrcDocu/d8/ded/classPart_1_1TopoShape.html
+        # 
+        # makeCompound
+        # https://free-cad.sourceforge.net/SrcDocu/df/d90/AppPartPy_8cpp_source.html#l00316
+        # 
+        # void TopoShape::exportStep	(	const char * 	FileName	 ) 	const
+        # export step : https://free-cad.sourceforge.net/SrcDocu/d0/d36/TopoShape_8cpp_source.html#l00645
+        # import step : https://free-cad.sourceforge.net/SrcDocu/d0/d36/TopoShape_8cpp_source.html#l00555
 
     def _get_geometry_bounding_box(self, padding: float = 10.0):
         """

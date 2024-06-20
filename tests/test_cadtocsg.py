@@ -188,7 +188,7 @@ def test_conversion_multi():
         debug=False,
         compSolids=True,
         simplify="fill",
-        exportSolids="",
+        exportSolids="./tests_outputs/test_conversion_multi.stp",
         minVoidSize=200.0,  # units mm
         maxSurf=50,
         maxBracket=30,
