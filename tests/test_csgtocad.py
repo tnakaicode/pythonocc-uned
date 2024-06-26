@@ -1,5 +1,8 @@
+import sys, os
 from pathlib import Path
 import pytest
+
+sys.path.append(os.path.join("./src/"))
 import geouned
 
 

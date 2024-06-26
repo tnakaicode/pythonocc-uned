@@ -344,10 +344,64 @@ class CadToCsg:
         # makeCompound
         # https://free-cad.sourceforge.net/SrcDocu/df/d90/AppPartPy_8cpp_source.html#l00316
         # 
-        # void TopoShape::exportStep	(	const char * 	FileName	 ) 	const
+        
         # export step : https://free-cad.sourceforge.net/SrcDocu/d0/d36/TopoShape_8cpp_source.html#l00645
-        # import step : https://free-cad.sourceforge.net/SrcDocu/d0/d36/TopoShape_8cpp_source.html#l00555
-
+        # 00645 void TopoShape::exportStep(const char *filename) const
+        # 00646 {
+        # 00647     try {
+        # 00648         // write step file
+        # 00649         STEPControl_Writer aWriter;
+        # 00650 
+        # 00651         Handle_Message_ProgressIndicator pi = new ProgressIndicator(100);
+        # 00652         aWriter.WS()->MapReader()->SetProgress(pi);
+        # 00653         pi->NewScope(100, "Writing STEP file...");
+        # 00654         pi->Show();
+        # 00655 
+        # 00656         if (aWriter.Transfer(this->_Shape, STEPControl_AsIs) != IFSelect_RetDone)
+        # 00657             throw Base::Exception("Error in transferring STEP");
+        # 00658 
+        # 00659         APIHeaderSection_MakeHeader makeHeader(aWriter.Model());
+        # 00660         makeHeader.SetName(new TCollection_HAsciiString((const Standard_CString)filename));
+        # 00661         makeHeader.SetAuthorValue (1, new TCollection_HAsciiString("FreeCAD"));
+        # 00662         makeHeader.SetOrganizationValue (1, new TCollection_HAsciiString("FreeCAD"));
+        # 00663         makeHeader.SetOriginatingSystem(new TCollection_HAsciiString("FreeCAD"));
+        # 00664         makeHeader.SetDescriptionValue(1, new TCollection_HAsciiString("FreeCAD Model"));
+        # 00665 
+        # 00666         if (aWriter.Write((const Standard_CString)filename) != IFSelect_RetDone)
+        # 00667             throw Base::Exception("Writing of STEP failed");
+        # 00668         pi->EndScope();
+        # 00669     }
+        # 00670     catch (Standard_Failure) {
+        # 00671         Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+        # 00672         throw Base::Exception(aFail->GetMessageString());
+        # 00673     }
+        # 00674 }
+        
+        # import step : https://free-cad.sourceforge.net/SrcDocu/d0/d36/TopoShape_8cpp_source.html#l00555        
+        # 00555 void TopoShape::importStep(const char *FileName)
+        # 00556 {
+        # 00557     try {
+        # 00558         STEPControl_Reader aReader;
+        # 00559         if (aReader.ReadFile((const Standard_CString)FileName) != IFSelect_RetDone)
+        # 00560             throw Base::Exception("Error in reading STEP");
+        # 00561 
+        # 00562         Handle_Message_ProgressIndicator pi = new ProgressIndicator(100);
+        # 00563         aReader.WS()->MapReader()->SetProgress(pi);
+        # 00564         pi->NewScope(100, "Reading STEP file...");
+        # 00565         pi->Show();
+        # 00566 
+        # 00567         // Root transfers
+        # 00568         aReader.TransferRoots();
+        # 00569         // one shape that contains all subshapes
+        # 00570         this->_Shape = aReader.OneShape();
+        # 00571         pi->EndScope();
+        # 00572     }
+        # 00573     catch (Standard_Failure) {
+        # 00574         Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+        # 00575         throw Base::Exception(aFail->GetMessageString());
+        # 00576     }
+        # 00577 }
+        
     def _get_geometry_bounding_box(self, padding: float = 10.0):
         """
         Get the bounding box of the geometry.

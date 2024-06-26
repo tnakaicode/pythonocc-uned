@@ -86,7 +86,7 @@ def test_conversion(input_step_file):
         debug=False,
         compSolids=True,
         simplify="no",
-        exportSolids="",
+        exportSolids=f"{output_filename_stem.resolve()}.stp",
         minVoidSize=200.0,  # units mm
         maxSurf=50,
         maxBracket=30,
@@ -124,6 +124,15 @@ def test_conversion(input_step_file):
         dummyMat=True,  # changed from the default
         cellCommentFile=False,
         cellSummaryFile=False,  # changed from the default
+    )
+
+    geo = geouned.CsgToCad()
+    
+    geo.export_cad(
+        input_filename=f"{output_filename_stem.resolve()}.mcnp",
+        csg_format="mcnp",
+        bounding_box=[0.0, -500.0, -500.0, 1000.0, 500.0, 500.0],
+        output_filename=f"{output_filename_stem.resolve()}",
     )
 
     # for suffix in suffixes:
@@ -233,6 +242,15 @@ def test_conversion_multi():
         dummyMat=True,  # changed from the default
         cellCommentFile=True,
         cellSummaryFile=True,  # changed from the default
+    )
+    
+    geo = geouned.CsgToCad()
+    
+    geo.export_cad(
+        input_filename="./tests_outputs/test_conversion_multi.mcnp",
+        csg_format="mcnp",
+        bounding_box=[-1000.0, -500.0, -1000.0, 1000000, 100000, 100000.0],
+        output_filename=f"tests_outputs/test_conversion_multi",
     )
 
     # for suffix in suffixes:
