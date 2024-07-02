@@ -84,7 +84,7 @@ def test_conversion(input_step_file):
         matFile="",
         voidGen=True,
         debug=False,
-        compSolids=True,
+        compSolids=False,
         simplify="no",
         exportSolids=f"{output_filename_stem.resolve()}.stp",
         minVoidSize=200.0,  # units mm
